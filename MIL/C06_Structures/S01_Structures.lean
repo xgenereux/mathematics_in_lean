@@ -11,9 +11,18 @@ structure Point where
   y : ℝ
   z : ℝ
 
+/-
+We automatically generated the following theorem by adding @[ext].
+This also registers the theorem in the `ext` tactic.
+
+In some case it is better to give custom extensionality
+theorems to the `ext` tactic.
+
+-/
 #check Point.ext
 
-example (a b : Point) (hx : a.x = b.x) (hy : a.y = b.y) (hz : a.z = b.z) : a = b := by
+example (a b : Point) (hx : a.x = b.x) (hy : a.y = b.y)
+    (hz : a.z = b.z) : a = b := by
   ext
   repeat' assumption
 
@@ -28,6 +37,7 @@ def myPoint2 : Point :=
 def myPoint3 :=
   Point.mk 2 (-1) 4
 
+/- Naming the constuctor -/
 structure Point' where build ::
   x : ℝ
   y : ℝ
@@ -65,6 +75,7 @@ example (a b : Point) : add a b = add b a := by simp [add, add_comm]
 theorem add_x (a b : Point) : (a.add b).x = a.x + b.x :=
   rfl
 
+/- Using pattern matching. -/
 def addAlt : Point → Point → Point
   | Point.mk x₁ y₁ z₁, Point.mk x₂ y₂ z₂ => ⟨x₁ + x₂, y₁ + y₂, z₁ + z₂⟩
 
@@ -76,22 +87,33 @@ theorem addAlt_x (a b : Point) : (a.addAlt b).x = a.x + b.x := by
 
 theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   rw [addAlt, addAlt]
-  -- the same proof still works, but the goal view here is harder to read
+  /-
+  the same proof still works, but the goal view
+  here is harder to read
+  -/
   ext <;> dsimp
   repeat' apply add_comm
 
-protected theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
-  sorry
+theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
+  ext <;> simp_rw [add, _root_.add_assoc]
 
 def smul (r : ℝ) (a : Point) : Point :=
-  sorry
+  ⟨r * a.x, r * a.y, r * a.z⟩
 
 theorem smul_distrib (r : ℝ) (a b : Point) :
     (smul r a).add (smul r b) = smul r (a.add b) := by
-  sorry
+  ext <;> (simp_rw [add, smul]; ring)
 
 end Point
 
+/-
+Using structures is only the first step on the road to algebraic abstraction.
+We don’t yet have a way to link `Point.add` to the generic `+` symbol,
+or to connect `Point.add_comm` and `Point.add_assoc` to the generic `add_comm` and
+`add_assoc` theorems. See `6.2`.
+-/
+
+/- We can add fields of type `Prop`. -/
 structure StandardTwoSimplex where
   x : ℝ
   y : ℝ
@@ -100,6 +122,11 @@ structure StandardTwoSimplex where
   y_nonneg : 0 ≤ y
   z_nonneg : 0 ≤ z
   sum_eq : x + y + z = 1
+
+/-
+Image :
+https://sagecell.sagemath.org/?z=eJwrSyzSUK_QqdSpUtfk5crMLcjJTM4siS_IyS8xTtGo0K7UrrK1NdRR0KjQ0TXUMdQEsirhrCoYqyg1PTM_zzYnMTcpJVEBbJyVQoWdrYFCYl6KQiWMUQVkaAIAbzAghA==&lang=sage&interacts=eJyLjgUAARUAuQ==
+-/
 
 namespace StandardTwoSimplex
 
@@ -115,6 +142,7 @@ def swapXy (a : StandardTwoSimplex) : StandardTwoSimplex
 
 noncomputable section
 
+/- Function on our `StandardTwoSimplex`-/
 def midpoint (a b : StandardTwoSimplex) : StandardTwoSimplex
     where
   x := (a.x + b.x) / 2
@@ -125,9 +153,26 @@ def midpoint (a b : StandardTwoSimplex) : StandardTwoSimplex
   z_nonneg := div_nonneg (add_nonneg a.z_nonneg b.z_nonneg) (by norm_num)
   sum_eq := by field_simp; linarith [a.sum_eq, b.sum_eq]
 
-def weightedAverage (lambda : Real) (lambda_nonneg : 0 ≤ lambda) (lambda_le : lambda ≤ 1)
-    (a b : StandardTwoSimplex) : StandardTwoSimplex :=
-  sorry
+/-
+Given a parameter `ω` satisfying `0 ≤ ω ≤ 1`, we can take the weighted
+average `ωa + (1 − ω)b` of two points `a` and `b` in the standard 2-simplex.
+We challenge you to define that function, in analogy to the midpoint function above.
+-/
+theorem x_eq (a : StandardTwoSimplex) : a.x = 1 - a.y - a.z := by
+  linarith [a.sum_eq]
+
+def weightedAverage (ω : Real) (ω_nonneg : 0 ≤ ω) (ω_le : ω ≤ 1)
+    (a b : StandardTwoSimplex) : StandardTwoSimplex where
+  x := ω * a.x + (1 - ω) * b.x
+  y := ω * a.y + (1 - ω) * b.y
+  z := ω * a.z + (1 - ω) * b.z
+  x_nonneg := by
+    apply add_nonneg
+    · apply mul_nonneg ω_nonneg a.x_nonneg
+    · apply mul_nonneg (by linarith) b.x_nonneg
+  y_nonneg := sorry
+  z_nonneg := sorry
+  sum_eq := by simp_rw [x_eq]; ring
 
 end
 
@@ -135,6 +180,7 @@ end StandardTwoSimplex
 
 open BigOperators
 
+/- Generalisation with `Fin n`, the canonical type with `n` elements. -/
 structure StandardSimplex (n : ℕ) where
   V : Fin n → ℝ
   NonNeg : ∀ i : Fin n, 0 ≤ V i
@@ -157,6 +203,7 @@ def midpoint (n : ℕ) (a b : StandardSimplex n) : StandardSimplex n
 
 end StandardSimplex
 
+/- Structure without data. -/
 structure IsLinear (f : ℝ → ℝ) where
   is_additive : ∀ x y, f (x + y) = f x + f y
   preserves_mul : ∀ x c, f (c * x) = c * f x
@@ -169,11 +216,18 @@ variable (f : ℝ → ℝ) (linf : IsLinear f)
 
 end
 
+/- Using `Prod` instead. -/
 def Point'' :=
   ℝ × ℝ × ℝ
 
+/- Using `∧` instead of a struct. -/
 def IsLinear' (f : ℝ → ℝ) :=
   (∀ x y, f (x + y) = f x + f y) ∧ ∀ x c, f (c * x) = c * f x
+
+
+/-
+It is sometimes also possible to use the idea of **subtypes** instead of structure.
+-/
 
 def PReal :=
   { y : ℝ // 0 < y }
@@ -200,10 +254,10 @@ section
 variable (s : StdSimplex)
 
 #check s.fst
+/- Second component is Data. (Not a `Prop`) -/
 #check s.snd
 
 #check s.1
 #check s.2
 
 end
-

@@ -5,12 +5,25 @@ open BigOperators
 
 namespace C05S03
 
+#check Nat.strong_induction_on
+/-
+From the book: 
+
+Let us continue our exploration of induction and recursion with another
+mathematical standard:
+  a proof that there are infinitely many primes.
+One way to formulate this is as the statement that for
+every natural number n, there is a prime number greater than n.
+To prove this, let p be any prime factor of n! + 1.
+If p is less than or equal to n, it divides n!.
+Since it also divides n! + 1, it divides 1, a contradiction.
+Hence p is greater than n.
+
+-/
+
+
 theorem two_le {m : ℕ} (h0 : m ≠ 0) (h1 : m ≠ 1) : 2 ≤ m := by
-  cases m; contradiction
-  case succ m =>
-    cases m; contradiction
-    repeat apply Nat.succ_le_succ
-    apply zero_le
+  omega
 
 example {m : ℕ} (h0 : m ≠ 0) (h1 : m ≠ 1) : 2 ≤ m := by
   by_contra h
@@ -24,18 +37,20 @@ example {m : ℕ} (h0 : m ≠ 0) (h1 : m ≠ 1) : 2 ≤ m := by
   revert h m
   decide
 
-theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) : ∃ p : Nat, p.Prime ∧ p ∣ n := by
+theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) :
+    ∃ p : Nat, p.Prime ∧ p ∣ n := by
   by_cases np : n.Prime
   · use n, np
   induction' n using Nat.strong_induction_on with n ih
   rw [Nat.prime_def_lt] at np
   push_neg at np
   rcases np h with ⟨m, mltn, mdvdn, mne1⟩
+  clear np
   have : m ≠ 0 := by
     intro mz
     rw [mz, zero_dvd_iff] at mdvdn
     linarith
-  have mgt2 : 2 ≤ m := two_le this mne1
+  have mgt2 : 2 ≤ m := by omega
   by_cases mp : m.Prime
   · use m, mp
   · rcases ih m mltn mgt2 mp with ⟨p, pp, pdvd⟩
@@ -224,4 +239,3 @@ theorem primes_mod_4_eq_3_infinite : ∀ n, ∃ p > n, Nat.Prime p ∧ p % 4 = 3
   have : p = 3 := by
     sorry
   contradiction
-

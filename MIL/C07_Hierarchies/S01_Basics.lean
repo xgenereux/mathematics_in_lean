@@ -286,7 +286,7 @@ class AddMonoid₄ (M : Type) extends AddSemigroup₃ M, AddZeroClass M where
   /-- Multiplication by `(0 : ℕ)` gives `0`. -/
   nsmul_zero : ∀ x, nsmul 0 x = 0 := by intros; rfl
   /-- Multiplication by `(n + 1 : ℕ)` behaves as expected. -/
-  nsmul_succ : ∀ (n : ℕ) (x), nsmul (n + 1) x = x + nsmul n x := by intros; rfl
+  nsmul_succ : ∀ (n : ℕ) (x), nsmul (n + 1) x = nsmul n x + x := by intros; rfl
 
 instance mySMul {M : Type} [AddMonoid₄ M] : SMul ℕ M := ⟨AddMonoid₄.nsmul⟩
 
@@ -296,6 +296,7 @@ instance (M N : Type) [AddMonoid₄ M] [AddMonoid₄ N] : AddMonoid₄ (M × N) 
   zero := (0, 0)
   zero_add := fun a ↦ by ext <;> apply zero_add
   add_zero := fun a ↦ by ext <;> apply add_zero
+  nsmul := nsmulRec
 
 instance : AddMonoid₄ ℤ where
   add := (· + ·)

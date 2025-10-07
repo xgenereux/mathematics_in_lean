@@ -1,6 +1,7 @@
 import Mathlib.Algebra.EuclideanDomain.Basic
 import Mathlib.RingTheory.PrincipalIdealDomain
 import MIL.Common
+import MIL.C03_Logic.S02_The_Existential_Quantifier
 
 @[ext]
 structure GaussInt where
@@ -21,6 +22,10 @@ instance : Add GaussInt :=
 instance : Neg GaussInt :=
   ⟨fun x ↦ ⟨-x.re, -x.im⟩⟩
 
+/-
+(a + bi)(c + di) = ac + bci + adi + bdi^2
+                 = (ac − bd) + (bc + ad)i.
+-/
 instance : Mul GaussInt :=
   ⟨fun x y ↦ ⟨x.re * y.re - x.im * y.im, x.re * y.im + x.im * y.re⟩⟩
 
@@ -39,6 +44,10 @@ theorem neg_def (x : GaussInt) : -x = ⟨-x.re, -x.im⟩ :=
 theorem mul_def (x y : GaussInt) :
     x * y = ⟨x.re * y.re - x.im * y.im, x.re * y.im + x.im * y.re⟩ :=
   rfl
+
+/-
+It is useful to register obvious reductions in `simp`
+-/
 
 @[simp]
 theorem zero_re : (0 : GaussInt).re = 0 :=
@@ -79,6 +88,10 @@ theorem mul_re (x y : GaussInt) : (x * y).re = x.re * y.re - x.im * y.im :=
 @[simp]
 theorem mul_im (x y : GaussInt) : (x * y).im = x.re * y.im + x.im * y.re :=
   rfl
+
+/-
+instance : CommRing GaussInt := _
+-/
 
 instance instCommRing : CommRing GaussInt where
   zero := 0
@@ -136,13 +149,25 @@ theorem sub_re (x y : GaussInt) : (x - y).re = x.re - y.re :=
 theorem sub_im (x y : GaussInt) : (x - y).im = x.im - y.im :=
   rfl
 
+/-
+We can show that the Gaussian integers are not trivial. (0 ≠ 1).
+-/
 instance : Nontrivial GaussInt := by
   use 0, 1
   rw [Ne, GaussInt.ext_iff]
-  simp
+  simp only [zero_re, one_re, zero_ne_one, zero_im, one_im, and_true, not_false_eq_true]
 
 end GaussInt
 
+/-
+With this set up, we can show that the Gaussian integers
+are an instance of what mathematicians call a `EuclideanDomain`.
+
+A Euclidean domain is some **commutative ring** where we have an
+analogue of the division with remainder on `ℤ`.
+-/
+
+/- Division with remainder on `ℤ`. -/
 example (a b : ℤ) : a = b * (a / b) + a % b :=
   Eq.symm (Int.ediv_add_emod a b)
 
@@ -171,30 +196,74 @@ theorem abs_mod'_le (a b : ℤ) (h : 0 < b) : |mod' a b| ≤ b / 2 := by
   have := Int.emod_lt_of_pos (a + b / 2) h
   have := Int.ediv_add_emod b 2
   have := Int.emod_lt_of_pos b zero_lt_two
-  revert this; intro this -- FIXME, this should not be needed
   linarith
 
 theorem mod'_eq (a b : ℤ) : mod' a b = a - b * div' a b := by linarith [div'_add_mod' a b]
 
 end Int
 
+
+/-
+Mathematicians care about such property because
+the **fundamental theorem of arithmetic** follows
+from Euclidean division.
+
+Not all rings have this property! Consider for example `ℤ[√(-5)]` where :
+`6 = 2 * 3 = (1 + √(-5)) * (1 + √(-5))`
+We are skiping some details, but here we have two different factorisation!
+
+Consider the ring `A`. If there exists some function `N : A → ℕ` s. t.
+`N(0) = 0`, `∀ a ≠ 0, N(a) > 0` and `∀ a ∀ b ≠ 0,  ∃ q, r` s. t.
+`a = qb + r` and `N(r) < N(b)`.
+Finally, we also require that `∀ a,b ≠ 0, a ∣ b → N (a) ≤ N (b)`.
+
+The Integers have this property with `N(a) = |a|`.
+
+For the Gaussian integers, it turns out that
+`N(a + bi) = a ^ 2 + b ^ 2` fits this scenario.
+-/
+
+variable {} (A : U → Prop) (h1 : ∃ x, A x)
+
 theorem sq_add_sq_eq_zero {α : Type*} [LinearOrderedRing α] (x y : α) :
     x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
   sorry
+
 namespace GaussInt
 
+/- Definition of the norm function. -/
 def norm (x : GaussInt) :=
   x.re ^ 2 + x.im ^ 2
 
 @[simp]
 theorem norm_nonneg (x : GaussInt) : 0 ≤ norm x := by
   sorry
+
 theorem norm_eq_zero (x : GaussInt) : norm x = 0 ↔ x = 0 := by
   sorry
+
 theorem norm_pos (x : GaussInt) : 0 < norm x ↔ x ≠ 0 := by
   sorry
+
+#check C03S02.sumOfSquares_mul
+@[simp]
 theorem norm_mul (x y : GaussInt) : norm (x * y) = norm x * norm y := by
   sorry
+
+/-
+`norm_mul` is all we need to show the second property.
+-/
+theorem ED.dvd_le (a b : GaussInt) (hb : b ≠ 0)
+    (hab : a ∣ b) : norm a ≤ norm b := by
+  by_cases ha : a = 0
+  · obtain ⟨q, rfl⟩ := hab
+    simp_all
+  obtain ⟨q, rfl⟩ := hab
+  replace ha := (norm_pos a).mpr ha
+  replace hb := (norm_pos _).mpr hb
+  aesop
+
+
 def conj (x : GaussInt) : GaussInt :=
   ⟨x.re, -x.im⟩
 

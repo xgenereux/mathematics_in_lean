@@ -6,10 +6,13 @@ namespace C03S03
 section
 variable (a b : ℝ)
 
+/- Remember: `¬ A "=" A → False `-/
+
+/- Typical use -/
 example (h : a < b) : ¬b < a := by
   intro h'
   have : a < a := lt_trans h h'
-  apply lt_irrefl a this
+  apply lt_irrefl _ this
 
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
   ∀ x, f x ≤ a
@@ -32,9 +35,11 @@ example (h : ∀ a, ∃ x, f x > a) : ¬FnHasUb f := by
   have : f x ≤ a := fnuba x
   linarith
 
+/- similar -/
 example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
   sorry
 
+/- choose the right witness-/
 example : ¬FnHasUb fun x ↦ x :=
   sorry
 
@@ -42,13 +47,21 @@ example : ¬FnHasUb fun x ↦ x :=
 #check (not_lt_of_ge : a ≥ b → ¬a < b)
 #check (lt_of_not_ge : ¬a ≥ b → a < b)
 #check (le_of_not_gt : ¬a > b → a ≤ b)
+#check not_le
+#check not_lt
 
+/- `lt_iff_not_ge` or `not_le`, `not_lt`
+Let's look at `absurd` and `contrapose(!)`
+-/
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  contrapose h'
+  simp only [not_lt] at *
+  exact h h'
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
 
+/- local definitions -/
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
   intro h
   let f := fun x : ℝ ↦ (0 : ℝ)
@@ -56,8 +69,12 @@ example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a �
   have h' : f 1 ≤ f 0 := le_refl _
   sorry
 
+/- Let's use `by_contra`-/
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
-  sorry
+  by_contra h'
+  simp at h'
+  specialize h (x / 2) (by linarith)
+  linarith
 
 end
 
@@ -136,4 +153,3 @@ example (h : 0 < 0) : a > 37 := by
   contradiction
 
 end
-

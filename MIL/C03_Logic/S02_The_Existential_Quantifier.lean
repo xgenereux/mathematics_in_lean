@@ -5,6 +5,7 @@ set_option autoImplicit true
 
 namespace C03S02
 
+/- Example of use -/
 example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
   use 5 / 2
   norm_num
@@ -18,8 +19,9 @@ example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
   have h : 2 < (5 : ℝ) / 2 ∧ (5 : ℝ) / 2 < 3 := by norm_num
   use 5 / 2
 
+/- anonymous constructor -/
 example : ∃ x : ℝ, 2 < x ∧ x < 3 :=
-  have h : 2 < (5 : ℝ) / 2 ∧ (5 : ℝ) / 2 < 3 := by norm_num
+  have h : 2 < (5 : ℝ) / 2  ∧ (5 : ℝ) / 2 < 3 := by norm_num
   ⟨5 / 2, h⟩
 
 example : ∃ x : ℝ, 2 < x ∧ x < 3 :=
@@ -45,18 +47,21 @@ section
 
 variable {f g : ℝ → ℝ}
 
+/- I recommend `obtain` -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
-  rcases ubf with ⟨a, ubfa⟩
+  obtain ⟨a, ubfa⟩ := ubf
   rcases ubg with ⟨b, ubgb⟩
   use a + b
   apply fnUb_add ubfa ubgb
 
+/- If there is interest -/
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
   sorry
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
   sorry
 
+/- More anonymous constructor (hover) -/
 example : FnHasUb f → FnHasUb g → FnHasUb fun x ↦ f x + g x := by
   rintro ⟨a, ubfa⟩ ⟨b, ubgb⟩
   exact ⟨a + b, fnUb_add ubfa ubgb⟩
@@ -71,6 +76,7 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   obtain ⟨b, ubgb⟩ := ubg
   exact ⟨a + b, fnUb_add ubfa ubgb⟩
 
+/- cases and case -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   cases ubf
   case intro a ubfa =>
@@ -78,6 +84,7 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
     case intro b ubgb =>
       exact ⟨a + b, fnUb_add ubfa ubgb⟩
 
+/- cases and next -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   cases ubf
   next a ubfa =>
@@ -85,6 +92,7 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
     next b ubgb =>
       exact ⟨a + b, fnUb_add ubfa ubgb⟩
 
+/- match example -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   match ubf, ubg with
     | ⟨a, ubfa⟩, ⟨b, ubgb⟩ =>
@@ -107,9 +115,10 @@ theorem sumOfSquares_mul {x y : α} (sosx : SumOfSquares x) (sosy : SumOfSquares
   rcases sosx with ⟨a, b, xeq⟩
   rcases sosy with ⟨c, d, yeq⟩
   rw [xeq, yeq]
-  use a * c - b * d, a * d + b * c
+  use a * c - b * d, a * d + b * c /- How to find this solution? -/
   ring
 
+/- rfl in anonymous constructor -/
 theorem sumOfSquares_mul' {x y : α} (sosx : SumOfSquares x) (sosy : SumOfSquares y) :
     SumOfSquares (x * y) := by
   rcases sosx with ⟨a, b, rfl⟩
@@ -122,12 +131,14 @@ end
 section
 variable {a b c : ℕ}
 
+/- example with div-/
 example (divab : a ∣ b) (divbc : b ∣ c) : a ∣ c := by
   rcases divab with ⟨d, beq⟩
   rcases divbc with ⟨e, ceq⟩
   rw [ceq, beq]
   use d * e; ring
 
+/- Let's try to do this one. -/
 example (divab : a ∣ b) (divac : a ∣ c) : a ∣ b + c := by
   sorry
 
@@ -142,6 +153,7 @@ example {c : ℝ} : Surjective fun x ↦ x + c := by
   use x - c
   dsimp; ring
 
+/- Division, `mul_div_cancel₀` and `field_simp` -/
 example {c : ℝ} (h : c ≠ 0) : Surjective fun x ↦ c * x := by
   sorry
 
@@ -162,6 +174,7 @@ open Function
 variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
+/- A little bit more difficult but not so much. -/
 example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
   sorry
 

@@ -13,9 +13,22 @@ variable (u v : Set β)
 open Function
 open Set
 
+#check fun B ↦ preimage f B
+#check fun B ↦ f ⁻¹' B
+#check fun B ↦ {x : α | f x ∈ B}
+
+example (x : α) :  x ∈ f ⁻¹' u ↔ f x ∈ u :=
+  Iff.rfl
+  -- by rfl
+  -- by simp only [mem_preimage]
+
 example : f ⁻¹' (u ∩ v) = f ⁻¹' u ∩ f ⁻¹' v := by
-  ext
+  --ext
   rfl
+
+#check fun B ↦ image f B
+#check fun B ↦ f '' B
+#check {y | ∃ x, x ∈ s ∧ f x = y}
 
 example : f '' (s ∪ t) = f '' s ∪ f '' t := by
   ext y; constructor
@@ -28,75 +41,24 @@ example : f '' (s ∪ t) = f '' s ∪ f '' t := by
   · use x, Or.inl xs
   use x, Or.inr xt
 
+/- Notice that use close the goal since it tries `rfl`. -/
 example : s ⊆ f ⁻¹' (f '' s) := by
   intro x xs
   show f x ∈ f '' s
   use x, xs
 
+-- Note that we could have used:
+#check fun x s f (xs : x ∈ s) ↦ mem_image_of_mem f xs
+
+attribute [-simp] image_subset_iff
+/- What do these unfold to? Which one is the most convenient? -/
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
   sorry
 
-example (h : Injective f) : f ⁻¹' (f '' s) ⊆ s := by
-  sorry
 
+/- Another example. -/
 example : f '' (f ⁻¹' u) ⊆ u := by
   sorry
-
-example (h : Surjective f) : u ⊆ f '' (f ⁻¹' u) := by
-  sorry
-
-example (h : s ⊆ t) : f '' s ⊆ f '' t := by
-  sorry
-
-example (h : u ⊆ v) : f ⁻¹' u ⊆ f ⁻¹' v := by
-  sorry
-
-example : f ⁻¹' (u ∪ v) = f ⁻¹' u ∪ f ⁻¹' v := by
-  sorry
-
-example : f '' (s ∩ t) ⊆ f '' s ∩ f '' t := by
-  sorry
-
-example (h : Injective f) : f '' s ∩ f '' t ⊆ f '' (s ∩ t) := by
-  sorry
-
-example : f '' s \ f '' t ⊆ f '' (s \ t) := by
-  sorry
-
-example : f ⁻¹' u \ f ⁻¹' v ⊆ f ⁻¹' (u \ v) := by
-  sorry
-
-example : f '' s ∩ v = f '' (s ∩ f ⁻¹' v) := by
-  sorry
-
-example : f '' (s ∩ f ⁻¹' u) ⊆ f '' s ∩ u := by
-  sorry
-
-example : s ∩ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∩ u) := by
-  sorry
-
-example : s ∪ f ⁻¹' u ⊆ f ⁻¹' (f '' s ∪ u) := by
-  sorry
-
-variable {I : Type*} (A : I → Set α) (B : I → Set β)
-
-example : (f '' ⋃ i, A i) = ⋃ i, f '' A i := by
-  sorry
-
-example : (f '' ⋂ i, A i) ⊆ ⋂ i, f '' A i := by
-  sorry
-
-example (i : I) (injf : Injective f) : (⋂ i, f '' A i) ⊆ f '' ⋂ i, A i := by
-  sorry
-
-example : (f ⁻¹' ⋃ i, B i) = ⋃ i, f ⁻¹' B i := by
-  sorry
-
-example : (f ⁻¹' ⋂ i, B i) = ⋂ i, f ⁻¹' B i := by
-  sorry
-
-example : InjOn f s ↔ ∀ x₁ ∈ s, ∀ x₂ ∈ s, f x₁ = f x₂ → x₁ = x₂ :=
-  Iff.refl _
 
 end
 
@@ -104,34 +66,8 @@ section
 
 open Set Real
 
-example : InjOn log { x | x > 0 } := by
-  intro x xpos y ypos
-  intro e
-  -- log x = log y
-  calc
-    x = exp (log x) := by rw [exp_log xpos]
-    _ = exp (log y) := by rw [e]
-    _ = y := by rw [exp_log ypos]
-
-
-example : range exp = { y | y > 0 } := by
-  ext y; constructor
-  · rintro ⟨x, rfl⟩
-    apply exp_pos
-  intro ypos
-  use log y
-  rw [exp_log ypos]
-
-example : InjOn sqrt { x | x ≥ 0 } := by
-  sorry
-
-example : InjOn (fun x ↦ x ^ 2) { x : ℝ | x ≥ 0 } := by
-  sorry
-
+/- More concrete example. -/
 example : sqrt '' { x | x ≥ 0 } = { y | y ≥ 0 } := by
-  sorry
-
-example : (range fun x ↦ x ^ 2) = { y : ℝ | y ≥ 0 } := by
   sorry
 
 end
@@ -189,5 +125,4 @@ theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
   sorry
   contradiction
 
--- COMMENTS: TODO: improve this
 end
