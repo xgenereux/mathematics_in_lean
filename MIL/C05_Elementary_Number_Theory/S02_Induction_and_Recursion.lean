@@ -101,7 +101,7 @@ example {n : ℕ} (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
 lemma pow_three_le_fac (n : ℕ) (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
   match n with
   | 7 => decide
-  | k + 8 => 
+  | k + 8 =>
       obtain ih := pow_three_le_fac (k + 7) (by norm_num)
       rw [fac, pow_succ, mul_comm]
       apply Nat.mul_le_mul (by omega) ih
@@ -135,7 +135,7 @@ example : (range n).sum f = ∑ x in range n, f x :=
 example (f : ℕ → ℕ) : ∑ x in range 0, f x = 0 :=
   Finset.sum_range_zero f
 
-example (f : ℕ → ℕ) (n : ℕ) : ∑ x in range n.succ, f x = ∑ x in range n, f x + f n :=
+example (f : ℕ → ℕ) (n : ℕ) : ∑ x ∈ range n.succ, f x = ∑ x ∈ range n, f x + f n :=
   Finset.sum_range_succ f n
 
 theorem sum_id (n : ℕ) :
@@ -146,7 +146,7 @@ theorem sum_id (n : ℕ) :
   rw [Finset.sum_range_succ, mul_add 2, ← ih]
   ring
 
-theorem sum_sqr (n : ℕ) : ∑ i in range (n + 1), i ^ 2 = n * (n + 1) * (2 * n + 1) / 6 := by
+theorem sum_sqr (n : ℕ) : ∑ i ∈ range (n + 1), i ^ 2 = n * (n + 1) * (2 * n + 1) / 6 := by
   sorry
 end
 
@@ -156,7 +156,7 @@ We will use `Finset.sum_induction` -/
 example (n : ℕ) {s : Finset ℕ} (base : ∀ a ∈ s, n ∣ a) :
     n ∣ (∑ a ∈ s, a) := by
   apply Finset.sum_induction
-  · apply dvd_add 
+  · apply dvd_add
   · norm_num
   · assumption
 

@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Introduction &mdash; Mathematics in Lean 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>1. Introduction &mdash; Mathematics in Lean v4.19.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=0731ccc3" />
 
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=2709fde1"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7048e04d"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -56,13 +54,14 @@
 <li class="toctree-l1"><a class="reference internal" href="C03_Logic.html">3. Logic</a></li>
 <li class="toctree-l1"><a class="reference internal" href="C04_Sets_and_Functions.html">4. Sets and Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="C05_Elementary_Number_Theory.html">5. Elementary Number Theory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C06_Structures.html">6. Structures</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C07_Hierarchies.html">7. Hierarchies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C08_Groups_and_Rings.html">8. Groups and Rings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C09_Linear_Algebra.html">9. Linear algebra</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C10_Topology.html">10. Topology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C11_Differential_Calculus.html">11. Differential Calculus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="C12_Integration_and_Measure_Theory.html">12. Integration and Measure Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C06_Discrete_Mathematics.html">6. Discrete Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C07_Structures.html">7. Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C08_Hierarchies.html">8. Hierarchies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C09_Groups_and_Rings.html">9. Groups and Rings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C10_Linear_Algebra.html">10. Linear algebra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C11_Topology.html">11. Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C12_Differential_Calculus.html">12. Differential Calculus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="C13_Integration_and_Measure_Theory.html">13. Integration and Measure Theory</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
@@ -284,8 +283,8 @@ a <code class="docutils literal notranslate"><span class="pre">k</span></code> a
 The second line, <code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">m</span> <span class="pre">*</span> <span class="pre">k</span></code>,
 declares that we are going to show that <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span></code> is even by
 showing <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">(m</span> <span class="pre">*</span> <span class="pre">k)</span></code>.
-The next line uses the <code class="docutils literal notranslate"><span class="pre">rewrite</span></code> tactic
-to replace <code class="docutils literal notranslate"><span class="pre">n</span></code> by <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">k</span></code> in the goal,
+The next line uses the <code class="docutils literal notranslate"><span class="pre">rw</span></code> tactic
+to replace <code class="docutils literal notranslate"><span class="pre">n</span></code> by <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">k</span></code> in the goal (<code class="docutils literal notranslate"><span class="pre">rw</span></code> stands for &#8220;rewrite&#8221;),
 and the <code class="docutils literal notranslate"><span class="pre">ring</span></code> tactic solves the resulting goal <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">k)</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">(m</span> <span class="pre">*</span> <span class="pre">k)</span></code>.</p>
 <p>The ability to build a proof in small steps with incremental feedback
 is extremely powerful. For that reason,
@@ -356,13 +355,13 @@ Marc Huisinga,
 Benjamin Jones,
 Julian K&#252;lshammer,
 Victor Liu, Jimmy Lu,
-Martin C. Martin, Giovanni Mascellani, John McDowell, Isaiah Mindich, Hunter Monroe,
-Pietro Monticone,
-Oliver Nash, Emanuelle Natale,
+Martin C. Martin, Giovanni Mascellani, John McDowell, Joseph McKinsey, Bhavik Mehta, Isaiah Mindich,
+Kabelo Moiloa, Hunter Monroe, Pietro Monticone,
+Oliver Nash, Emanuelle Natale, Filippo A. E. Nuccio,
 Pim Otte,
 Bartosz Piotrowski,
 Nicolas Rolland, Keith Rush,
-Yannick Seurin, Guilherme Silva,
+Yannick Seurin, Guilherme Silva, Bernardo Subercaseaux,
 Pedro S&#225;nchez Terraf, Matthew Toohey, Alistair Tucker,
 Floris van Doorn,
 Eric Wieser,
@@ -383,7 +382,7 @@ Formal Mathematics.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2020, Jeremy Avigad, Patrick Massot.</p>
+    <p>&#169; Copyright 2020-2025, Jeremy Avigad, Patrick Massot. Text licensed under CC BY 4.0.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
