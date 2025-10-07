@@ -202,7 +202,6 @@ theorem mod'_eq (a b : ℤ) : mod' a b = a - b * div' a b := by linarith [div'_a
 
 end Int
 
-<<<<<<< HEAD:MIL/C06_Structures/S03_Building_the_Gaussian_Integers.lean
 
 /-
 Mathematicians care about such property because
@@ -224,14 +223,10 @@ For the Gaussian integers, it turns out that
 `N(a + bi) = a ^ 2 + b ^ 2` fits this scenario.
 -/
 
-variable {} (A : U → Prop) (h1 : ∃ x, A x)
+variable {U : Type} (A : U → Prop) (h1 : ∃ x, A x)
 
-theorem sq_add_sq_eq_zero {α : Type*} [LinearOrderedRing α] (x y : α) :
+theorem sq_add_sq_eq_zero {α : Type*} [Ring α] [LinearOrder α] [IsStrictOrderedRing α] (x y : α) :
     x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
-=======
-theorem sq_add_sq_eq_zero {α : Type*} [Ring α] [LinearOrder α] [IsStrictOrderedRing α]
-    (x y : α) : x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0 := by
->>>>>>> 2bf0e10dd0c02438b65110f85cd9b68a9dbe6e39:MIL/C07_Structures/S03_Building_the_Gaussian_Integers.lean
   sorry
 
 namespace GaussInt

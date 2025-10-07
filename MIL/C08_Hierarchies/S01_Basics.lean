@@ -308,8 +308,7 @@ instance : AddMonoid₄ ℤ where
   add_zero := Int.add_zero
   nsmul := fun n m ↦ (n : ℤ) * m
   nsmul_zero := Int.zero_mul
-  nsmul_succ := fun n m ↦ show (n + 1 : ℤ) * m = m + n * m
-    by rw [Int.add_mul, Int.add_comm, Int.one_mul]
+  nsmul_succ := fun n m ↦ show (n + 1 : ℤ) * m = n * m + m
+    by rw [Int.add_mul, Int.one_mul]
 
 example (n : ℕ) (m : ℤ) : SMul.smul (self := mySMul) n m = n * m := rfl
-

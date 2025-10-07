@@ -118,7 +118,7 @@ which has no duplicate elements.
 
 Let's type #check Finset.ind...
 -/
-#check Finset.inductio
+#check Finset.induction
 
 
 #check Finset.sum s f
