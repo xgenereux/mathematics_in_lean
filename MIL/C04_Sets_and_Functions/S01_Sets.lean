@@ -125,8 +125,12 @@ example : s ∩ t = t ∩ s := by
 /- Same thing in term mode -/
 example : s ∩ t = t ∩ s :=
     Subset.antisymm
-      (fun x ⟨xs, xt⟩  ↦ ⟨xt, xs⟩)
-      (fun x ⟨xt, xs⟩  ↦ ⟨xs, xt⟩)
+      sorry
+      sorry
+  /- Sol:
+    (fun x ⟨xs, xt⟩  ↦ ⟨xt, xs⟩)
+    (fun x ⟨xt, xs⟩  ↦ ⟨xs, xt⟩)
+  -/
 
 /- **Start here** -/
 
@@ -142,7 +146,7 @@ so `x ∈ { y | P y }` reduces to `P x`.
 -/
 #check eq_mem_setOf
 
-/- 
+/-
 For example,
 We can turn the property of being even into the set of even numbers:
 -/
@@ -192,12 +196,14 @@ example (x : ℕ) : x ∈ (univ : Set ℕ) :=
 Show this using `Nat.Prime.eq_two_or_odd` and `Nat.odd_iff`.
 -/
 #check Nat.Prime.eq_two_or_odd
-example : { n | Nat.Prime n } ∩ { n | n > 2 }
-    ⊆ { n | ¬Even n } := by
-  intro x ⟨hp, h2⟩
-  simp_all
-  rw [Nat.odd_iff]
-  obtain h | h := Nat.Prime.eq_two_or_odd hp <;> simp_all
+example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
+  sorry
+  /- Sol:
+    intro x ⟨hp, h2⟩
+    simp_all
+    rw [Nat.odd_iff]
+    obtain h | h := Nat.Prime.eq_two_or_odd hp <;> simp_all
+  -/
 
 
 /- General notion of primality-/
@@ -228,14 +234,20 @@ variable (s t : Set ℕ)
 /- Bounded quantifiers. Small differences but behave roughly the same
 as you would expect: ∀ x ∈ s, ... = ∀ x, x ∈ s → ...  -/
 example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) : ∀ x ∈ s, ¬Even x ∧ Prime x := by
-  intro x xs
-  constructor
-  · apply h₀ x xs
-  apply h₁ x xs
+  sorry
+  /- Sol:
+    intro x xs
+    constructor
+    · apply h₀ x xs
+    apply h₁ x xs
+  -/
 
 example (h : ∃ x ∈ s, ¬Even x ∧ Prime x) : ∃ x ∈ s, Prime x := by
-  rcases h with ⟨x, xs, _, prime_x⟩
-  use x, xs
+  sorry
+  /- Sol:
+    rcases h with ⟨x, xs, _, prime_x⟩
+    use x, xs
+  -/
 
 end
 

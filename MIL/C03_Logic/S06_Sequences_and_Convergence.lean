@@ -43,11 +43,12 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   use max Ns Nt
   intro n hn
   -- hint use calc
-  specialize ht n (le_trans (le_max_right _ _) hn)
-  specialize hs n (le_trans (le_max_left _ _) hn)
-  calc
-    |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
-    _ ≤ |s n - a| + |t n - b| := by apply abs_add
-    _ < ε / 2 + ε / 2 := by exact add_lt_add hs ht
-    _ = ε := by ring
-
+  sorry
+  /-  Sol:
+      specialize ht n (le_trans (le_max_right _ _) hn)
+      specialize hs n (le_trans (le_max_left _ _) hn)
+      calc
+        |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
+        _ ≤ |s n - a| + |t n - b| := by apply abs_add
+        _ < ε / 2 + ε / 2 := by exact add_lt_add hs ht
+        _ = ε := by ring -/

@@ -83,10 +83,13 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x :=
 
 /- Practice using another form of `antisymm`. -/
 example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
-  refine ⟨h.1, ?_⟩
-  intro h'
-  apply h.2
-  exact Nat.dvd_antisymm h.1 h'
+  sorry
+  /- Sol:
+    refine ⟨h.1, ?_⟩
+    intro h'
+    apply h.2
+    exact Nat.dvd_antisymm h.1 h'
+  -/
 
 /- anonymous constructor with `∃` and `∧`. -/
 example : ∃ x : ℝ, 2 < x ∧ x < 4 :=

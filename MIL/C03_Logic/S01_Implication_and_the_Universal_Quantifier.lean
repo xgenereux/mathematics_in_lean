@@ -72,7 +72,9 @@ example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) :
 
 /- Now a similar example in term mode-/
 example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
-  fun _ ↦ add_le_add (hfa _) (hgb _)
+  sorry
+  /- Sol:
+    fun _ ↦ add_le_add (hfa _) (hgb _)-/
 
 /- show using mul_nonneg
 try Leansearch
@@ -81,9 +83,12 @@ try apply?, exact?
 #check mul_nonneg
 
 example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
-  intro x
-  simp
-  exact Left.mul_nonneg (nnf x) (nng x)
+  sorry
+  /- Sol:
+    intro x
+    simp
+    exact Left.mul_nonneg (nnf x) (nng x) -/
+
 
 example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
     FnUb (fun x ↦ f x * g x) (a * b) :=
@@ -125,7 +130,9 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
 
 /- term mode using _ -/
 example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
-  fun a b aleb ↦ (mul_le_mul_of_nonneg_left (mf aleb) nnc)
+  sorry
+  /- Sol:
+    fun a b aleb ↦ (mul_le_mul_of_nonneg_left (mf aleb) nnc) -/
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
   sorry

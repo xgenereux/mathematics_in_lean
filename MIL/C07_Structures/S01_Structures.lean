@@ -95,14 +95,23 @@ theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   repeat' apply add_comm
 
 theorem add_assoc (a b c : Point) : (a.add b).add c = a.add (b.add c) := by
-  ext <;> simp_rw [add, _root_.add_assoc]
+  sorry
+  /- Sol:
+    ext <;> simp_rw [add, _root_.add_assoc]
+  -/
 
 def smul (r : ℝ) (a : Point) : Point :=
-  ⟨r * a.x, r * a.y, r * a.z⟩
+  sorry
+  /- Sol:
+    ⟨r * a.x, r * a.y, r * a.z⟩
+  -/
 
 theorem smul_distrib (r : ℝ) (a b : Point) :
     (smul r a).add (smul r b) = smul r (a.add b) := by
-  ext <;> (simp_rw [add, smul]; ring)
+  sorry
+  /- Sol:
+    ext <;> (simp_rw [add, smul]; ring)
+  -/
 
 end Point
 
@@ -162,17 +171,20 @@ theorem x_eq (a : StandardTwoSimplex) : a.x = 1 - a.y - a.z := by
   linarith [a.sum_eq]
 
 def weightedAverage (ω : Real) (ω_nonneg : 0 ≤ ω) (ω_le : ω ≤ 1)
-    (a b : StandardTwoSimplex) : StandardTwoSimplex where
-  x := ω * a.x + (1 - ω) * b.x
-  y := ω * a.y + (1 - ω) * b.y
-  z := ω * a.z + (1 - ω) * b.z
-  x_nonneg := by
-    apply add_nonneg
-    · apply mul_nonneg ω_nonneg a.x_nonneg
-    · apply mul_nonneg (by linarith) b.x_nonneg
-  y_nonneg := sorry
-  z_nonneg := sorry
-  sum_eq := by simp_rw [x_eq]; ring
+    (a b : StandardTwoSimplex) : StandardTwoSimplex := sorry
+  /- Sol:
+    where
+      x := ω * a.x + (1 - ω) * b.x
+      y := ω * a.y + (1 - ω) * b.y
+      z := ω * a.z + (1 - ω) * b.z
+      x_nonneg := by
+        apply add_nonneg
+        · apply mul_nonneg ω_nonneg a.x_nonneg
+        · apply mul_nonneg (by linarith) b.x_nonneg
+      y_nonneg := sorry
+      z_nonneg := sorry
+      sum_eq := by simp_rw [x_eq]; ring
+  -/
 
 end
 

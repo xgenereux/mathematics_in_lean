@@ -110,21 +110,30 @@ namespace Point
 def add (a b : Point) : Point :=
   ⟨a.x + b.x, a.y + b.y, a.z + b.z⟩
 
-def neg (a : Point) : Point := ⟨- a.x, - a.y, - a.z⟩
+def neg (a : Point) : Point := sorry
+  /- Sol:
+    ⟨- a.x, - a.y, - a.z⟩
+  -/
 
-def zero : Point := ⟨0,0,0⟩
+def zero : Point := sorry
+  /- Sol:
+    ⟨0,0,0⟩
 
-theorem zero_def : zero = ⟨0,0,0⟩ := rfl
+    theorem zero_def : zero = ⟨0,0,0⟩ := rfl
+  -/
 
-def addGroupPoint : AddGroup₁ Point where
-  add := add
-  zero := zero
-  neg := neg
-  add_assoc x y z := by simp [add, add_assoc]
-  add_zero x := by simp [add, zero]
-  zero_add := by simp [add, zero]
-  neg_add_cancel x := by
-    simp only [add, neg, neg_add_cancel, zero]
+def addGroupPoint : AddGroup₁ Point := sorry
+  /- Sol:
+    where
+      add := add
+      zero := zero
+      neg := neg
+      add_assoc x y z := by simp [add, add_assoc]
+      add_zero x := by simp [add, zero]
+      zero_add := by simp [add, zero]
+      neg_add_cancel x := by
+        simp only [add, neg, neg_add_cancel, zero]
+  -/
 
 end Point
 

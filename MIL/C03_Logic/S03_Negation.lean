@@ -54,9 +54,12 @@ example : ¬FnHasUb fun x ↦ x :=
 Let's look at `absurd` and `contrapose(!)`
 -/
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  contrapose h'
-  simp only [not_lt] at *
-  exact h h'
+  sorry
+  /- Sol:
+    contrapose h'
+    simp only [not_lt] at *
+    exact h h'
+  -/
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry

@@ -17,18 +17,24 @@
         "lean-toolchain": true,
         "mathematics_in_lean.pdf": true,
         "MIL.lean": true,
-        "README.md":true,
-	".lake": true,
-	".devcontainer": true,
-	".github": true
+        "README.md": true,
+        ".lake": true,
+        ".devcontainer": true,
+        ".github": true
     },
     "editor.minimap.enabled": false,
     "editor.acceptSuggestionOnEnter": "off",
     "editor.quickSuggestions.comments": true,
     "scm.diffDecorationsGutterVisibility": "hover",
     "editor.semanticHighlighting.enabled": true,
+    "editor.folding": true,
+    "editor.foldingStrategy": "indentation",
     "editor.semanticTokenColorCustomizations": {
-        "[Default Light+]": {"rules": {"variable": "#1a31da"}}
+        "[Default Light+]": {
+            "rules": {
+                "variable": "#1a31da"
+            }
+        }
     },
     "editor.unicodeHighlight.nonBasicASCII": false,
     "editor.unicodeHighlight.ambiguousCharacters": false,

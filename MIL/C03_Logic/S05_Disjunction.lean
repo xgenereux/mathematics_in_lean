@@ -71,35 +71,48 @@ namespace MyAbs
 /- let's try to use le_or_gt -/
 
 theorem le_abs_self (x : ℝ) : x ≤ |x| := by
-  rcases le_or_gt 0 x with h | h
-  · rw [abs_of_nonneg h]
-  linarith [abs_of_neg h]
+  sorry
+  /- Sol:
+    rcases le_or_gt 0 x with h | h
+    · rw [abs_of_nonneg h]
+    · linarith [abs_of_neg h]
+  -/
 
 theorem neg_le_abs_self (x : ℝ) : -x ≤ |x| := by
-  rcases le_or_gt 0 x with h | h
-  · linarith [abs_of_nonneg h]
-  linarith [abs_of_neg h]
+  sorry
+  /-
+    rcases le_or_gt 0 x with h | h
+    · linarith [abs_of_nonneg h]
+    · linarith [abs_of_neg h]
+  -/
+
 
 theorem abs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
-  rcases le_or_gt 0 (x + y) with h | h
-  · rw [abs_of_nonneg h]
-    apply add_le_add (le_abs_self _) (le_abs_self _)
-  rw [abs_of_neg h]
-  linarith [neg_le_abs_self x, neg_le_abs_self y]
+  sorry
+  /-
+    rcases le_or_gt 0 (x + y) with h | h
+    · rw [abs_of_nonneg h]
+      apply add_le_add (le_abs_self _) (le_abs_self _)
+    rw [abs_of_neg h]
+    linarith [neg_le_abs_self x, neg_le_abs_self y]
+  -/
 
 theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
-  constructor
-  · intro h
-    rcases le_or_gt 0 y with h' | h'
-    · rw [abs_of_nonneg h'] at h
-      left
+  sorry
+  /-
+    constructor
+    · intro h
+      rcases le_or_gt 0 y with h' | h'
+      · rw [abs_of_nonneg h'] at h
+        left
+        exact h
+      rw [abs_of_neg h'] at h
+      right
       exact h
-    rw [abs_of_neg h'] at h
-    right
-    exact h
-  rintro (h | h)
-  · apply lt_of_lt_of_le h (le_abs_self y)
-  linarith [neg_le_abs_self y]
+    rintro (h | h)
+    · apply lt_of_lt_of_le h (le_abs_self y)
+    linarith [neg_le_abs_self y]
+  -/
 
 end MyAbs
 
@@ -137,11 +150,14 @@ variable (x y : R)
 /- x * y = 0 → x = 0 ∨ y = 0 -/
 #check mul_eq_zero
 example (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
-  have : x ^ 2 - 1 = 0 := by rw [h]; ring
-  have : (x + 1) * (x - 1) = 0 := by rw [← this]; ring
-  rw [mul_eq_zero] at this
-  rw [or_comm, ← sub_eq_zero, ← sub_eq_zero (a := x)]
-  simp [this]
+  sorry
+  /-
+    have : x ^ 2 - 1 = 0 := by rw [h]; ring
+    have : (x + 1) * (x - 1) = 0 := by rw [← this]; ring
+    rw [mul_eq_zero] at this
+    rw [or_comm, ← sub_eq_zero, ← sub_eq_zero (a := x)]
+    simp [this]
+  -/
 
 
 /- Let's do it again using **backwards reasoning** -/
