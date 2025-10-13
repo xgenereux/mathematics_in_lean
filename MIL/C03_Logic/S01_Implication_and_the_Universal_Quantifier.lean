@@ -43,7 +43,7 @@ theorem my_lemma3 :
   intro x y ε epos ele1 xlt ylt
   sorry
 
-/- Calc example -/
+/- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_right`, and `one_mul`-/
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
@@ -63,22 +63,30 @@ def FnLb (f : ℝ → ℝ) (a : ℝ) : Prop :=
 section
 variable (f g : ℝ → ℝ) (a b : ℝ)
 
-/- Intro without the rw -/
+/- Intro without the `rw [FnUb]`. -/
 example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) := by
+  --rw [FnUb]
   intro x
   apply add_le_add
-  apply hfa
-  apply hgb
+  · --rw [FnUb]
+    apply hfa
+  · --rw [FnUb]
+    apply hgb
 
-/- Now a similar example in term mode-/
+/- Now a similar example in term mode -/
 example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
   sorry
   /- Sol:
-    fun _ ↦ add_le_add (hfa _) (hgb _)-/
+    fun _ ↦ add_le_add (hfa _) (hgb _)
+  -/
 
-/- show using mul_nonneg
+/- show using `mul_nonneg`
+
+How to find
 try Leansearch
 try apply?, exact?
+try loogle
+try ai chats
  -/
 #check mul_nonneg
 
@@ -87,7 +95,8 @@ example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
   /- Sol:
     intro x
     simp
-    exact Left.mul_nonneg (nnf x) (nng x) -/
+    exact Left.mul_nonneg (nnf x) (nng x)
+  -/
 
 
 example (hfa : FnUb f a) (hgb : FnUb g b) (nng : FnLb g 0) (nna : 0 ≤ a) :
@@ -132,7 +141,8 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f x + g x :=
 example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
   sorry
   /- Sol:
-    fun a b aleb ↦ (mul_le_mul_of_nonneg_left (mf aleb) nnc) -/
+    fun a b aleb ↦ (mul_le_mul_of_nonneg_left (mf aleb) nnc)
+  -/
 
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
   sorry
