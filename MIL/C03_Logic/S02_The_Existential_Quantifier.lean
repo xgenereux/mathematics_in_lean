@@ -11,7 +11,7 @@ example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
   norm_num
 
 example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
-  have h1 : 2 < (5 : ℝ) / 2 := by norm_num
+  have h1 : 2 < (5 : ℝ) / 2 :=  by norm_num
   have h2 : (5 : ℝ) / 2 < 3 := by norm_num
   use 5 / 2, h1, h2
 
@@ -50,9 +50,10 @@ variable {f g : ℝ → ℝ}
 /- I recommend `obtain` -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   obtain ⟨a, ubfa⟩ := ubf
-  rcases ubg with ⟨b, ubgb⟩
+  --rcases ubg with ⟨b, ubgb⟩
+  obtain ⟨b, ubgb⟩ := ubg
   use a + b
-  apply fnUb_add ubfa ubgb
+  exact fnUb_add ubfa ubgb
 
 /- If there is interest -/
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
@@ -131,12 +132,15 @@ end
 section
 variable {a b c : ℕ}
 
+#check dvd_def
+
 /- example with div-/
 example (divab : a ∣ b) (divbc : b ∣ c) : a ∣ c := by
   rcases divab with ⟨d, beq⟩
   rcases divbc with ⟨e, ceq⟩
   rw [ceq, beq]
-  use d * e; ring
+  use d * e;
+  ring
 
 /- Let's try to do this one. -/
 example (divab : a ∣ b) (divac : a ∣ c) : a ∣ b + c := by

@@ -43,15 +43,27 @@ theorem my_lemma3 :
   intro x y ε epos ele1 xlt ylt
   sorry
 
-/- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_right`, and `one_mul`-/
+#check mul_le_mul
+#check mul_lt_mul_right
+#check abs
+
+/- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_right`,
+  and `one_mul`-/
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
   calc
-    |x * y| = |x| * |y| := by sorry
-    _ ≤ |x| * ε := by sorry
-    _ < 1 * ε := sorry
-    _ = ε := sorry
+    |x * y| = |x| * |y| := by rw [abs_mul]
+    _ ≤ |x| * ε := by
+      apply mul_le_mul
+      · simp
+      · exact le_of_lt ylt
+      · exact abs_nonneg y
+      · exact abs_nonneg x
+    _ < 1 * ε := by
+      rw [mul_lt_mul_right epos]
+      apply lt_of_lt_of_le xlt ele1
+    _ = ε := by simp only [one_mul]
 
 /- Definitions using ∀ -/
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
@@ -65,17 +77,17 @@ variable (f g : ℝ → ℝ) (a b : ℝ)
 
 /- Intro without the `rw [FnUb]`. -/
 example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) := by
-  --rw [FnUb]
+  -- rw [FnUb]
   intro x
   apply add_le_add
-  · --rw [FnUb]
+  · --rw [FnUb] at hfa
     apply hfa
   · --rw [FnUb]
     apply hgb
 
 /- Now a similar example in term mode -/
 example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
-  sorry
+  fun x ↦ add_le_add (hfa x) (hgb _)
   /- Sol:
     fun _ ↦ add_le_add (hfa _) (hgb _)
   -/
@@ -90,7 +102,12 @@ try ai chats
  -/
 #check mul_nonneg
 
+-- 0 ≤ a → 0 ≤ b → 0 ≤ a * b
 example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
+  intro x
+  simp
+
+
   sorry
   /- Sol:
     intro x
