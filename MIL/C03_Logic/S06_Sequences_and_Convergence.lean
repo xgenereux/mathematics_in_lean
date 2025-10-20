@@ -51,4 +51,5 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
         |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
         _ ≤ |s n - a| + |t n - b| := by apply abs_add
         _ < ε / 2 + ε / 2 := by exact add_lt_add hs ht
-        _ = ε := by ring -/
+        _ = ε := by ring
+  -/
