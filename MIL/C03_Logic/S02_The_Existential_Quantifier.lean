@@ -11,7 +11,7 @@ example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
   norm_num
 
 example : ∃ x : ℝ, 2 < x ∧ x < 3 := by
-  have h1 : 2 < (5 : ℝ) / 2 :=  by norm_num
+  have h1 : 2 < (5 : ℝ) / 2 := by norm_num
   have h2 : (5 : ℝ) / 2 < 3 := by norm_num
   use 5 / 2, h1, h2
 
@@ -50,10 +50,9 @@ variable {f g : ℝ → ℝ}
 /- I recommend `obtain` -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
   obtain ⟨a, ubfa⟩ := ubf
-  --rcases ubg with ⟨b, ubgb⟩
-  obtain ⟨b, ubgb⟩ := ubg
+  rcases ubg with ⟨b, ubgb⟩
   use a + b
-  exact fnUb_add ubfa ubgb
+  apply fnUb_add ubfa ubgb
 
 /- If there is interest -/
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
@@ -132,21 +131,21 @@ end
 section
 variable {a b c : ℕ}
 
-#check dvd_def
-
 /- example with div-/
 example (divab : a ∣ b) (divbc : b ∣ c) : a ∣ c := by
   rcases divab with ⟨d, beq⟩
   rcases divbc with ⟨e, ceq⟩
   rw [ceq, beq]
-  use d * e;
-  ring
+  use d * e; ring
 
 /- Let's try to do this one. -/
 example (divab : a ∣ b) (divac : a ∣ c) : a ∣ b + c := by
   sorry
 
 end
+
+----------------------------------------------
+-- Start of second lecture
 
 section
 
@@ -155,11 +154,16 @@ open Function
 example {c : ℝ} : Surjective fun x ↦ x + c := by
   intro x
   use x - c
-  dsimp; ring
+  dsimp; simp -- or `ring`
 
 /- Division, `mul_div_cancel₀` and `field_simp` -/
 example {c : ℝ} (h : c ≠ 0) : Surjective fun x ↦ c * x := by
   sorry
+  /-
+    intro x
+    use x / c
+    dsimp; sorry -- `grind` will solve this
+  -/
 
 example (x y : ℝ) (h : x - y ≠ 0) : (x ^ 2 - y ^ 2) / (x - y) = x + y := by
   field_simp [h]
@@ -181,5 +185,13 @@ variable {g : β → γ} {f : α → β}
 /- A little bit more difficult but not so much. -/
 example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
   sorry
+  /-
+    intro z
+    unfold Surjective at *
+    obtain ⟨y₁, rfl⟩ := surjg z
+    obtain ⟨y₂, rfl⟩ := surjf y₁
+    use y₂
+  -/
+
 
 end
