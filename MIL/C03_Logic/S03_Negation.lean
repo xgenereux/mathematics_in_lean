@@ -40,7 +40,7 @@ example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
   sorry
 
 /- choose the right witness-/
-example : ¬FnHasUb fun x ↦ x :=
+example : ¬FnHasUb fun x ↦ x := by
   sorry
 
 #check (not_le_of_gt : a > b → ¬a ≤ b)
@@ -64,19 +64,19 @@ example (h : Monotone f) (h' : f a < f b) : a < b := by
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
 
+/- The second the last example is not true for ≤.-/
 /- local definitions -/
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
   intro h
   let f := fun x : ℝ ↦ (0 : ℝ)
-  have monof : Monotone f := by sorry
+  have monof : Monotone f := by intro a b hab; exact le_refl _
   have h' : f 1 ≤ f 0 := le_refl _
   sorry
 
-/- Let's use `by_contra`-/
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
-  by_contra h'
-  simp at h'
-  specialize h (x / 2) (by linarith)
+  apply le_of_not_gt
+  intro hx
+  specialize h (x / 2) (by simp [hx])
   linarith
 
 end
@@ -90,6 +90,7 @@ example (h : ¬∃ x, P x) : ∀ x, ¬P x := by
 example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
   sorry
 
+-- !
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   sorry
 
@@ -112,6 +113,7 @@ example (h : Q) : ¬¬Q := by
 
 end
 
+-- push_neg
 section
 variable (f : ℝ → ℝ)
 
@@ -140,6 +142,8 @@ example (x : ℝ) (h : ∀ ε > 0, x ≤ ε) : x ≤ 0 := by
   constructor <;> linarith
 
 end
+
+-- `exflaso` and `False.elim`
 
 section
 variable (a : ℕ)
