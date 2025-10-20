@@ -6,14 +6,17 @@ namespace C03S04
 
 /- constructor example -/
 example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y := by
+  /-
+    constructor
+    · assumption
+    intro h
+    apply h₁
+    rw [h]
+  -/
   refine ⟨h₀, ?_⟩
   contrapose! h₁
   rw [h₁]
 
-/-
-(*) In particular, to the direction that
-    doesn't require classical reasoning.
--/
 
 /- anonymous constructor -/
 example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
@@ -114,6 +117,7 @@ lemma t : ∃ m n : ℕ, 4 < m ∧ m < n ∧ n < 10 ∧ Nat.Prime m ∧ Nat.Prim
   use 5
   use 7
   norm_num
+
 
 example : Nat.Prime 999999937 := by norm_num
 --example : Nat.Prime 9999999967 := by norm_num

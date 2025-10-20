@@ -160,12 +160,6 @@ example (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
   -/
 
 
-/- Let's do it again using **backwards reasoning** -/
-#check sub_eq_zero
-#check mul_eq_zero
-example (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  sorry
-
 end
 
 /- The 3 following show how to use by_cases -/
