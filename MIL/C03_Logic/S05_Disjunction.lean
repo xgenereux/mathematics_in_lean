@@ -71,7 +71,9 @@ namespace MyAbs
 /- let's try to use le_or_gt -/
 
 theorem le_abs_self (x : ℝ) : x ≤ |x| := by
-  sorry
+  obtain h | h := le_or_gt 0 x
+  · rw [abs_of_nonneg]; exact h
+  · rw [abs_of_neg h]; linarith
   /- Sol:
     rcases le_or_gt 0 x with h | h
     · rw [abs_of_nonneg h]
@@ -165,7 +167,7 @@ end
 /- The 3 following show how to use by_cases -/
 example (P : Prop) : ¬¬P → P := by
   intro h
-  cases em P
+  obtain h₁ | h₂ := em P
   · assumption
   · contradiction
 
@@ -176,6 +178,15 @@ example (P : Prop) : ¬¬P → P := by
   contradiction
 
 example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
-  sorry
+  constructor
+  · intro h
+    by_cases hP : P
+    right; exact h hP
+    left; exact hP
+  · intro h hP
+    obtain h | h := h
+    · contradiction
+    · exact h
+
 
 /- Look at cheatsheet-/

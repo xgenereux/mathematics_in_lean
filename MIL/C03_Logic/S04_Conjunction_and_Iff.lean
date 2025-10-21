@@ -86,7 +86,16 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x :=
 
 /- Practice using another form of `antisymm`. -/
 example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
-  sorry
+  obtain ⟨hdiv, hne⟩ := h
+  constructor
+  · exact hdiv
+  · intro h
+    apply hne
+    exact Nat.dvd_antisymm hdiv h
+    -- obtain ⟨w₁, hw₁⟩ := h
+    -- obtain ⟨w₂, hw₂⟩ := hdiv
+    -- rw [hw₂] at hw₁
+    --simp at hw₁
   /- Sol:
     refine ⟨h.1, ?_⟩
     intro h'

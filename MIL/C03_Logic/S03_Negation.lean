@@ -41,7 +41,14 @@ example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
 
 /- choose the right witness-/
 example : ¬FnHasUb fun x ↦ x := by
-  sorry
+  intro hf
+  unfold FnHasUb at hf
+  obtain ⟨u, hu⟩ := hf
+  unfold FnUb at hu
+  dsimp at hu
+  specialize hu (u + 1)
+  simp at hu
+  norm_num at hu
 
 #check (not_le_of_gt : a > b → ¬a ≤ b)
 #check (not_lt_of_ge : a ≥ b → ¬a < b)
@@ -54,7 +61,10 @@ example : ¬FnHasUb fun x ↦ x := by
 Let's look at `absurd` and `contrapose(!)`
 -/
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  unfold Monotone at h
+  contrapose h'
+  rw [not_lt] at ⊢ h'
+  apply h h'
   /- Sol:
     contrapose h'
     simp only [not_lt] at *
@@ -71,7 +81,9 @@ example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a �
   let f := fun x : ℝ ↦ (0 : ℝ)
   have monof : Monotone f := by intro a b hab; exact le_refl _
   have h' : f 1 ≤ f 0 := le_refl _
-  sorry
+  have : (1 : ℝ) ≤ 0 := h monof h'
+  specialize @h f monof 1 0 h'
+  linarith
 
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   apply le_of_not_gt
@@ -101,12 +113,15 @@ example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
   apply h
   intro x
-  show P x
+  --show P x
   by_contra h''
-  exact h' ⟨x, h''⟩
+  apply h'
+  exact ⟨x, h''⟩
+
+-- ¬¬Q ↔ Q
 
 example (h : ¬¬Q) : Q := by
-  sorry
+  push_neg at h
 
 example (h : Q) : ¬¬Q := by
   sorry
@@ -118,7 +133,10 @@ section
 variable (f : ℝ → ℝ)
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
-  sorry
+  unfold FnHasUb at h
+  unfold FnUb at h
+  push_neg at h
+  exact h
 
 example (h : ¬∀ a, ∃ x, f x > a) : FnHasUb f := by
   push_neg at h
@@ -151,6 +169,7 @@ variable (a : ℕ)
 example (h : 0 < 0) : a > 37 := by
   exfalso
   apply lt_irrefl 0 h
+
 
 example (h : 0 < 0) : a > 37 :=
   absurd h (lt_irrefl 0)

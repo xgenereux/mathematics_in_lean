@@ -158,7 +158,9 @@ example {c : ℝ} : Surjective fun x ↦ x + c := by
 
 /- Division, `mul_div_cancel₀` and `field_simp` -/
 example {c : ℝ} (h : c ≠ 0) : Surjective fun x ↦ c * x := by
-  sorry
+  intro x
+  use x / c
+  dsimp; rw [mul_div_cancel₀ _ h] -- grind
   /-
     intro x
     use x / c
@@ -183,8 +185,13 @@ variable {α : Type*} {β : Type*} {γ : Type*}
 variable {g : β → γ} {f : α → β}
 
 /- A little bit more difficult but not so much. -/
-example (surjg : Surjective g) (surjf : Surjective f) : Surjective fun x ↦ g (f x) := by
-  sorry
+example (surjg : Surjective g) (surjf : Surjective f) :
+    Surjective fun x ↦ g (f x) := by
+  unfold Surjective at *
+  intro z
+  obtain ⟨y, rfl⟩ :=  surjg z
+  obtain ⟨x, rfl⟩ :=  surjf y
+  use x
   /-
     intro z
     unfold Surjective at *
