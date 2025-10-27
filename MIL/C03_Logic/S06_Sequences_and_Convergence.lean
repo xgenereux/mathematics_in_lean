@@ -43,7 +43,16 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   use max Ns Nt
   intro n hn
   -- hint use calc
-  sorry
+  calc
+    |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
+     _ ≤ |s n - a| + |t n - b| := abs_add_le (s n - a) (t n - b)
+     _ < ε / 2 + ε / 2 := by
+      refine add_lt_add ?_ ?_
+      · apply hs
+        omega
+      · apply ht
+        omega
+     _ = ε := by simp
   /-  Sol:
       specialize ht n (le_trans (le_max_right _ _) hn)
       specialize hs n (le_trans (le_max_left _ _) hn)

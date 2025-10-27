@@ -54,13 +54,14 @@ lemma t1 : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
   obtain xs := hx.1
   obtain xtu := hx.2
   /- definitional reduction on `∪` using `rcases`-/
-  -- rw [union_def, mem_setOf] at xtu
+  --rw [union_def, mem_setOf] at xtu
   rcases xtu with xt | xu
   · left
     show x ∈ s ∩ t
     exact ⟨xs, xt⟩
   · right
     show x ∈ s ∩ u
+    rw [inter_def, mem_setOf]
     exact ⟨xs, xu⟩
 
 /- Nice example using anonymous constructor-/
@@ -71,7 +72,12 @@ example : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
 
 /- Let's try it out. -/
 example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
-  sorry
+  intro x hx
+  obtain hst | hsu := hx
+  · constructor
+    · exact hst.1
+    · left; exact hst.2
+  · exact ⟨hsu.1, Or.inr hsu.2⟩
 
 #check Set.diff_eq
 #check Set.mem_diff
@@ -113,7 +119,7 @@ example : s ∩ t = t ∩ s := by
   · rintro ⟨xt, xs⟩; exact ⟨xs, xt⟩
 
 example : s ∩ t = t ∩ s :=
-  Set.ext fun x ↦ ⟨fun ⟨xs, xt⟩ ↦ ⟨xt, xs⟩, fun ⟨xt, xs⟩ ↦ ⟨xs, xt⟩⟩
+  Set.ext fun _ ↦ ⟨fun ⟨xs, xt⟩ ↦ ⟨xt, xs⟩, fun ⟨xt, xs⟩ ↦ ⟨xs, xt⟩⟩
 
 example : s ∩ t = t ∩ s := by ext x; simp [and_comm]
 
@@ -128,14 +134,12 @@ example : s ∩ t = t ∩ s := by
 /- Same thing in term mode -/
 example : s ∩ t = t ∩ s :=
     Subset.antisymm
-      sorry
-      sorry
+      (fun x h ↦ and_comm.mp h)
+      (fun x ⟨xs, xt⟩ ↦ ⟨xt, xs⟩)
   /- Sol:
     (fun x ⟨xs, xt⟩  ↦ ⟨xt, xs⟩)
     (fun x ⟨xt, xs⟩  ↦ ⟨xs, xt⟩)
   -/
-
-/- **Start here** -/
 
 /-
 **Some details about Sets**
@@ -200,7 +204,12 @@ Show this using `Nat.Prime.eq_two_or_odd` and `Nat.odd_iff`.
 -/
 #check Nat.Prime.eq_two_or_odd
 example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
-  sorry
+  rintro x ⟨hp, h2⟩
+  simp at *
+  obtain h | h := Nat.Prime.eq_two_or_odd hp
+  · linarith
+  · rwa [Nat.odd_iff]
+
   /- Sol:
     intro x ⟨hp, h2⟩
     simp_all
@@ -231,8 +240,12 @@ section
 variable (s t : Set ℕ)
 /- Bounded quantifiers. Small differences but behave roughly the same
 as you would expect: ∀ x ∈ s, ... = ∀ x, x ∈ s → ...  -/
-example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) : ∀ x ∈ s, ¬Even x ∧ Prime x := by
-  sorry
+example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) :
+    ∀ x ∈ s, ¬Even x ∧ Prime x := by
+  intro x xs
+  constructor
+  · apply h₀ x xs
+  · apply h₁ x xs
   /- Sol:
     intro x xs
     constructor
@@ -241,7 +254,8 @@ example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) : ∀ x ∈
   -/
 
 example (h : ∃ x ∈ s, ¬Even x ∧ Prime x) : ∃ x ∈ s, Prime x := by
-  sorry
+  rcases h with ⟨x, xs, ⟨_, prime_x⟩⟩
+  use x, xs-- xs
   /- Sol:
     rcases h with ⟨x, xs, _, prime_x⟩
     use x, xs
@@ -295,7 +309,12 @@ We'll also need `Nat.exists_infinite_primes`.
 hint: use simp to simplify the big union.
 -/
 example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
-  sorry
+  rw [eq_univ_iff_forall]
+  intro x
+  simp
+  obtain ⟨p, h⟩ := Nat.exists_infinite_primes x
+  use p
+  ac_nf
   /-
     rw [@eq_univ_iff_forall]
     intro a
@@ -316,6 +335,9 @@ variable {α : Type*} (s : Set (Set α))
 
 /- Definition of the **Union of a set of sets.** -/
 #check fun {α} (S : Set (Set α)) ↦ ⋃ i ∈ S, i -- fill
+example {α} (S : Set (Set α)) : {a | ∃ s ∈ S, a ∈ s} = ⋃ i ∈ S, i := by
+  ext
+  simp
 
 #print Set.sUnion
 #check fun {α} (S : Set (Set α)) ↦ sSup S
