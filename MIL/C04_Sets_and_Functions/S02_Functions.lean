@@ -29,6 +29,7 @@ example : f ⁻¹' (u ∩ v) = f ⁻¹' u ∩ f ⁻¹' v := by
 #check fun B ↦ image f B
 #check fun B ↦ f '' B
 #check {y | ∃ x, x ∈ s ∧ f x = y}
+--  y ∈ f '' s decomposes to a triple ⟨x, xs, xeq⟩
 
 example : f '' (s ∪ t) = f '' s ∪ f '' t := by
   ext y; constructor
@@ -47,18 +48,38 @@ example : s ⊆ f ⁻¹' (f '' s) := by
   show f x ∈ f '' s
   use x, xs
 
--- Note that we could have used:
+-- We could have used:
 #check fun x s f (xs : x ∈ s) ↦ mem_image_of_mem f xs
+-- But since we know how the image is defined, we can provide the proof directly.
 
 attribute [-simp] image_subset_iff
-/- What do these unfold to? Which one is the most convenient? -/
+/- What do each side of this equivalence unfold to?
+Which one is the most convenient? -/
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
   sorry
+  /-
+    constructor
+    · intro hf
+      intro x hx
+      apply hf
+      exact ⟨x, hx, rfl⟩
+    · intro hf x hx
+      --obtain : ∀ x ∈ s, f x ∈ v := hf
+      obtain ⟨y, hy, rfl⟩ := hx
+      apply hf hy
+  -/
+
 
 
 /- Another example. -/
 example : f '' (f ⁻¹' u) ⊆ u := by
   sorry
+  /-
+    intro x hx
+    obtain ⟨y, hy, rfl⟩ := hx
+    --simp at hy
+    exact hy
+  -/
 
 end
 
@@ -67,8 +88,19 @@ section
 open Set Real
 
 /- More concrete example. -/
-example : sqrt '' { x | x ≥ 0 } = { y | y ≥ 0 } := by
+example : sqrt '' { x | 0 ≤ x } = { y | 0 ≤ y } := by
   sorry
+  /-
+    ext x
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      simp
+    · intro hnn
+      use x ^ 2, sq_nonneg x
+      -- exact? apply?
+      exact sqrt_sq hnn
+  -/
+
 
 end
 
@@ -80,6 +112,7 @@ variable {α β : Type*} [Inhabited α]
 variable (P : α → Prop) (h : ∃ x, P x)
 
 #check Classical.choose h
+#check Classical.choose_spec h
 
 example : P (Classical.choose h) :=
   Classical.choose_spec h
@@ -99,11 +132,40 @@ variable (f : α → β)
 
 open Function
 
-example : Injective f ↔ LeftInverse (inverse f) f :=
+example : Injective f ↔ LeftInverse (inverse f) f := by
   sorry
+  /-
+    constructor
+    · intro hinj
+      --unfold LeftInverse
+      intro x
+      have hex : ∃ y, f y = f x := by use x
+      rw [inverse, dif_pos hex]
+      apply hinj
+      exact choose_spec hex
+    · intro hinv
+      simp [LeftInverse] at hinv
+      intro x y hxy
+      rw [← hinv x, ← hinv y, hxy]
+  -/
 
-example : Surjective f ↔ RightInverse (inverse f) f :=
+example : Surjective f ↔ RightInverse (inverse f) f := by
   sorry
+  /-
+    constructor
+    · intro hsur
+      unfold RightInverse LeftInverse
+      unfold Surjective at hsur
+      intro x
+      exact inverse_spec x (hsur _)
+    · intro hinv
+      unfold RightInverse LeftInverse at hinv
+      unfold Surjective
+      intro y
+      use inverse f y
+      simp [hinv]
+  -/
+
 
 end
 
@@ -111,6 +173,9 @@ section
 variable {α : Type*}
 open Function
 
+/-
+No surjective function from a set to its power set. (Type-theoretic statement)
+-/
 theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
   intro f surjf
   let S := { i | i ∉ f i }
@@ -119,10 +184,10 @@ theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
     intro h'
     have : j ∉ f j := by rwa [h] at h'
     contradiction
-  have h₂ : j ∈ S
-  sorry
-  have h₃ : j ∉ S
-  sorry
+  have h₂ : j ∈ f j := by sorry
+    /-
+      rw [h]; simp [S, h₁]
+    -/
   contradiction
 
 end

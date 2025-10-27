@@ -2,6 +2,8 @@ import Mathlib.Data.Set.Lattice
 import Mathlib.Data.Nat.Prime.Basic
 import MIL.Common
 
+-- Plan: Basic operations and big operations.
+
 section
 variable {α : Type*}
 variable (s t u : Set α)
@@ -73,6 +75,7 @@ example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
 
 #check Set.diff_eq
 #check Set.mem_diff
+
 
 /- Another comparison with definitional reduction. -/
 example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
@@ -174,7 +177,7 @@ example : s ∪ t = {x | x ∈ s ∨ x ∈ t} := rfl
 example : ∅ = {x : α | False} := rfl
 example : univ = {x : α| True} := rfl
 
-/- Here the membership means that`fun x ↦ x ∈ s ↔ fun x ↦ False`-/
+/- Here the membership means that`fun x ↦ x ∈ ∅ ↔ fun x ↦ False`-/
 example (x : ℕ) (h : x ∈ (∅ : Set ℕ)) : False :=
   h
 
@@ -223,11 +226,6 @@ example (n : ℕ) (h : Prime n) : Nat.Prime n := by
 
 end
 
-
---------------------------------------------------
-
-
-
 section
 
 variable (s t : Set ℕ)
@@ -267,25 +265,6 @@ example : (s ∩ ⋃ i, A i) = ⋃ i, A i ∩ s := by
   rintro ⟨i, xAi, xs⟩
   exact ⟨xs, ⟨i, xAi⟩⟩
 
-example : (⋂ i, A i ∩ B i) = (⋂ i, A i) ∩ ⋂ i, B i := by
-  ext x
-  simp only [mem_inter_iff, mem_iInter]
-  constructor
-  · intro h
-    constructor
-    · intro i
-      exact (h i).1
-    intro i
-    exact (h i).2
-  rintro ⟨h1, h2⟩ i
-  constructor
-  · exact h1 i
-  exact h2 i
-
-
-example : (s ∪ ⋂ i, A i) = ⋂ i, A i ∪ s := by
-  sorry
-
 #check mem_iUnion₂
 #check mem_iInter₂
 
@@ -317,6 +296,15 @@ hint: use simp to simplify the big union.
 -/
 example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
   sorry
+  /-
+    rw [@eq_univ_iff_forall]
+    intro a
+    simp
+    obtain ⟨p, hp⟩  := Nat.exists_infinite_primes a
+    use p
+    --ac_nf
+    exact ⟨hp.2, hp.1⟩
+  -/
 
 end
 
@@ -327,7 +315,7 @@ open Set
 variable {α : Type*} (s : Set (Set α))
 
 /- Definition of the **Union of a set of sets.** -/
-#check fun {α} (S : Set (Set α)) ↦ sorry -- fill
+#check fun {α} (S : Set (Set α)) ↦ ⋃ i ∈ S, i -- fill
 
 #print Set.sUnion
 #check fun {α} (S : Set (Set α)) ↦ sSup S
