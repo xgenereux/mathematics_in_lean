@@ -60,14 +60,15 @@ example (n : ℕ) : 0 < fac n := by
 
 /-
 The `omega` tactic, for resolving integer and natural linear arithmetic problems.
+Note: You can also try out `grind`.
 -/
 example (n : ℕ) : 0 < fac n := by
-  induction' n with n ih
-  · rw [fac]
-    norm_num
-  rw [fac]
-  -- omega -- Doesn't work; not linear
-  exact mul_pos n.succ_pos ih -- norm_num [ih]
+  induction n with
+  | zero => rw [fac]; norm_num
+  | succ n ih =>
+    rw [fac]
+    -- omega -- Doesn't work; not linear
+    exact mul_pos n.succ_pos ih -- norm_num [ih], positivity
 
 /- An example with recursion (See HGLV 4.8) -/
 theorem fac_pos (n : ℕ) : 0 < fac n := by
@@ -77,26 +78,43 @@ theorem fac_pos (n : ℕ) : 0 < fac n := by
 
 /- Same thing with cases' instead of match. -/
 theorem fac_pos' (n : ℕ) : 0 < fac n := by
-  cases' n with k
+  generalize h : n = N
+  rcases N with _ | k
+  --cases' n with k
   · rw [fac]; norm_num
   · rw [fac]; exact mul_pos (by omega) (fac_pos' k)
 
 theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) :
     i ∣ fac n := by
-  induction' n with n ih
-  · simp_all
-  rw [fac]
-  rcases Nat.of_le_succ ile with h | rfl
-  · apply dvd_mul_of_dvd_right (ih h)
-  apply dvd_mul_right
+  induction n with
+  | zero => simp_all
+  | succ n ih =>
+    rw [fac]
+    rcases Nat.of_le_succ ile with h | rfl
+    · apply dvd_mul_of_dvd_right (ih h)
+    apply dvd_mul_right
 
 /- Let's use `Nat.le_induction`. -/
 #check Nat.le_induction
 example {n : ℕ} (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
-  induction' n, hle using Nat.le_induction with n hle hn
-  · norm_num [fac]
-  · rw [fac, pow_succ, mul_comm]
+  induction n, hle using Nat.le_induction with
+  | base => norm_num [fac]
+  | succ n hle hn =>
+    rw [fac, pow_succ, mul_comm]
     apply Nat.mul_le_mul (by omega) hn
+
+theorem pow_two_le_fac (n : Nat) : 2 ^ (n - 1) ≤ fac n := by
+  sorry
+  /-
+    match n with
+    | 0 => simp [fac]
+    | 1 => simp [fac]
+    | n + 2 =>
+      obtain ih := pow_two_le_fac (n + 1)
+      simp_all [fac]
+      rw [Nat.pow_add_one']
+      apply mul_le_mul _ ih <;> norm_num
+  -/
 
 lemma pow_three_le_fac (n : ℕ) (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
   match n with
@@ -111,6 +129,8 @@ section
 variable {α : Type*} (s : Finset ℕ) (f : ℕ → ℕ) (n : ℕ)
 
 #check Finset
+#print Finset
+#print Multiset
 /-
 `Finset α` is the type of finite sets of elements of α.
 It is implemented as a multiset (a **list** up to permutation)
@@ -126,13 +146,13 @@ Let's type #check Finset.ind...
 open BigOperators
 open Finset
 
-example : s.sum f = ∑ x in s, f x :=
+example : s.sum f = ∑ x ∈ s, f x :=
   rfl
 
-example : (range n).sum f = ∑ x in range n, f x :=
+example : (range n).sum f = ∑ x ∈ range n, f x :=
   rfl
 
-example (f : ℕ → ℕ) : ∑ x in range 0, f x = 0 :=
+example (f : ℕ → ℕ) : ∑ x ∈ range 0, f x = 0 :=
   Finset.sum_range_zero f
 
 example (f : ℕ → ℕ) (n : ℕ) : ∑ x ∈ range n.succ, f x = ∑ x ∈ range n, f x + f n :=
@@ -141,13 +161,15 @@ example (f : ℕ → ℕ) (n : ℕ) : ∑ x ∈ range n.succ, f x = ∑ x ∈ ra
 theorem sum_id (n : ℕ) :
     ∑ i in range (n + 1), i = n * (n + 1) / 2 := by
   symm; apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 2)
-  induction' n with n ih
-  · simp
-  rw [Finset.sum_range_succ, mul_add 2, ← ih]
-  ring
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Finset.sum_range_succ, mul_add 2, ← ih]
+    ring
 
 theorem sum_sqr (n : ℕ) : ∑ i ∈ range (n + 1), i ^ 2 = n * (n + 1) * (2 * n + 1) / 6 := by
-  sorry
+  sorry -- same idea
+
 end
 
 /- Elimate objects using some sort of induction.
@@ -188,21 +210,23 @@ def mul : MyNat → MyNat → MyNat
 
 /- All the proofs are by induction. -/
 theorem zero_add (n : MyNat) : add zero n = n := by
-  induction' n with n ih
-  · rfl
-  rw [add, ih]
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    -- Why are these rewrites important?
+    rw [add, ih]
 
 theorem succ_add (m n : MyNat) : add (succ m) n = succ (add m n) := by
-  induction' n with n ih
-  · rfl
-  rw [add, ih]
-  rfl
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [add, ih]
+    rfl
 
 example (m n : MyNat) : add m n = add n m := by
-  induction' n with n ih
-  · rw [zero_add]
-    rfl
-  rw [add, succ_add, ih]
+  induction n with
+  | zero => rw [zero_add]; rfl
+  | succ n ih => rw [add, succ_add, ih]
 
 /- Using recursion, the induction hypothesis is replaced by the name of the lemma. -/
 theorem add_comm (m n : MyNat) : add m n = add n m := by
