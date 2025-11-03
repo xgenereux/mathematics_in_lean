@@ -23,7 +23,6 @@ example (x : α) :  x ∈ f ⁻¹' u ↔ f x ∈ u :=
   -- by simp only [mem_preimage]
 
 example : f ⁻¹' (u ∩ v) = f ⁻¹' u ∩ f ⁻¹' v := by
-  --ext
   rfl
 
 #check fun B ↦ image f B
@@ -56,7 +55,15 @@ attribute [-simp] image_subset_iff
 /- What do each side of this equivalence unfold to?
 Which one is the most convenient? -/
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
-  sorry
+  constructor
+  · intro hf
+    intro x hx
+    simp
+    apply hf
+    exact ⟨x , hx, rfl⟩
+  · intro hf x hx
+    simp at hx
+    sorry
   /-
     constructor
     · intro hf
@@ -133,7 +140,20 @@ variable (f : α → β)
 open Function
 
 example : Injective f ↔ LeftInverse (inverse f) f := by
-  sorry
+  rw [LeftInverse]
+  constructor
+  · intro hinj x
+    rw [inverse]
+    have : ∃ y , f y = f x := ⟨x , rfl⟩
+    rw [dif_pos this]
+    apply hinj
+    rw [choose_spec this]
+  · intro heq a₁ a₂ ha
+    obtain ha₁ := heq a₁
+    obtain ha₂ := heq a₂
+    rw [ha] at ha₁
+    rw [← ha₂, ← ha₁]
+
   /-
     constructor
     · intro hinj
@@ -150,7 +170,15 @@ example : Injective f ↔ LeftInverse (inverse f) f := by
   -/
 
 example : Surjective f ↔ RightInverse (inverse f) f := by
-  sorry
+  rw [RightInverse, LeftInverse]
+  constructor
+  · intro h y
+    apply inverse_spec
+    apply h
+  · intro h y
+    use inverse f y
+    apply h
+
   /-
     constructor
     · intro hsur

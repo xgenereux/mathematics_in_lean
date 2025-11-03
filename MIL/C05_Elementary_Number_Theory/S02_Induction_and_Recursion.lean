@@ -38,8 +38,8 @@ def fac : ℕ → ℕ
 example : fac 0 = 1 :=
   rfl
 
-example : fac 0 = 1 := by
-  rw [fac]
+example : fac 1 = 1 := by
+  rw [fac]; rfl
 
 example : fac 0 = 1 := by
   simp [fac]
@@ -52,11 +52,6 @@ example (n : ℕ) : fac (n + 1) = (n + 1) * fac n := by
 
 example (n : ℕ) : fac (n + 1) = (n + 1) * fac n := by
   simp [fac]
-
-example (n : ℕ) : 0 < fac n := by
-  induction n with
-  | zero      => rw [fac]; exact zero_lt_one
-  | succ n ih => rw [fac]; exact mul_pos n.succ_pos ih
 
 /-
 The `omega` tactic, for resolving integer and natural linear arithmetic problems.
@@ -78,11 +73,11 @@ theorem fac_pos (n : ℕ) : 0 < fac n := by
 
 /- Same thing with cases' instead of match. -/
 theorem fac_pos' (n : ℕ) : 0 < fac n := by
-  generalize h : n = N
-  rcases N with _ | k
-  --cases' n with k
-  · rw [fac]; norm_num
-  · rw [fac]; exact mul_pos (by omega) (fac_pos' k)
+  -- generalize h : n = N
+  -- rcases N with _ | k
+  cases n with
+  | zero => rw [fac]; norm_num
+  | succ k => rw [fac]; exact mul_pos (by omega) (fac_pos' k)
 
 theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) :
     i ∣ fac n := by
