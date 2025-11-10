@@ -226,8 +226,8 @@ example (m n : MyNat) : add m n = add n m := by
 /- Using recursion, the induction hypothesis is replaced by the name of the lemma. -/
 theorem add_comm (m n : MyNat) : add m n = add n m := by
   match m with
-    | zero => simp_rw [zero_add, add]
-    | succ m => simp_rw [succ_add, add, add_comm]
+    | zero => rw [zero_add, add]
+    | succ m => rw [succ_add, add, add_comm]
 
 theorem add_assoc (m n k : MyNat) : add (add m n) k = add m (add n k) := by
   sorry

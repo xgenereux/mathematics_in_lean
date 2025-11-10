@@ -4,7 +4,8 @@ import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Fintype.BigOperators
 
 section
--- Note the `DecidableEq`. We usually have this for the date you expect to be able to compute.
+-- Note the `DecidableEq`. We usually have this for the date
+-- you expect to be able to compute.
 variable {α : Type*} [DecidableEq α] (a : α) (s t : Finset α)
 
 #check a ∈ s
@@ -23,6 +24,8 @@ variable (n : ℕ)
 #check a ∪ b
 #check a \ b
 #check (∅ : Finset ℕ)
+
+#check Finset.instInter
 
 example : a ∩ (b ∪ c) = (a ∩ b) ∪ (a ∩ c) := by
   ext x; simp only [mem_inter, mem_union]; tauto
@@ -91,7 +94,7 @@ end finsets_and_fintypes
 
 #check Finset.induction
 
-example {α : Type*} [DecidableEq α] (f : α → ℕ)  (s : Finset α) (h : ∀ x ∈ s, f x ≠ 0) :
+example {α : Type*} [DecidableEq α] (f : α → ℕ) (s : Finset α) (h : ∀ x ∈ s, f x ≠ 0) :
     ∏ x ∈ s, f x ≠ 0 := by
   induction s using Finset.induction_on with
   | empty => simp
