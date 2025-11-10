@@ -154,7 +154,7 @@ example (f : ℕ → ℕ) (n : ℕ) : ∑ x ∈ range n.succ, f x = ∑ x ∈ ra
   Finset.sum_range_succ f n
 
 theorem sum_id (n : ℕ) :
-    ∑ i in range (n + 1), i = n * (n + 1) / 2 := by
+    ∑ i ∈ range (n + 1), i = n * (n + 1) / 2 := by
   symm; apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 2)
   induction n with
   | zero => simp
@@ -231,12 +231,47 @@ theorem add_comm (m n : MyNat) : add m n = add n m := by
 
 theorem add_assoc (m n k : MyNat) : add (add m n) k = add m (add n k) := by
   sorry
+  /-
+    induction k with
+    | zero => rfl
+    | succ k ih => rw [add, ih]; rfl
+  -/
+
 theorem mul_add (m n k : MyNat) : mul m (add n k) = add (mul m n) (mul m k) := by
   sorry
+  /-
+    induction k with
+    | zero => rfl
+    | succ k ih => rw [add, mul, mul, ih, add_assoc]
+  -/
+
 theorem zero_mul (n : MyNat) : mul zero n = zero := by
   sorry
+  /-
+    induction n with
+    | zero => rfl
+    | succ k ih =>
+      rw [mul, ih]
+      rfl
+  -/
+
 theorem succ_mul (m n : MyNat) : mul (succ m) n = add (mul m n) n := by
   sorry
+  /-
+    induction n with
+    | zero => rfl
+    | succ k ih =>
+      rw [mul, mul, ih, add_assoc, add_assoc, add_comm k, succ_add]
+      rfl
+  -/
+
 theorem mul_comm (m n : MyNat) : mul m n = mul n m := by
   sorry
+  /-
+    induction n with
+    | zero => rw [zero_mul]; rfl
+    | succ k ih => rw [mul, ih, succ_mul]
+  -/
+
+
 end MyNat
