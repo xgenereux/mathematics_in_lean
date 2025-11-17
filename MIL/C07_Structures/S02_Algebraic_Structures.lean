@@ -14,8 +14,6 @@ Objectives :
 - Possibility to extend algebraic structure. (A commutative ring is still a ring.)
 -/
 
-example : 2 * 3 ≤ (2 : ℝ) * 4 := by apply mul_le_mul <;> norm_num
-
 /-
 `α` is a parameter; we are defining a group structure on `α`.
 
@@ -41,6 +39,8 @@ structure Grp₁ where
   str : Group₁ α
 
 section
+
+-- Let's build an example of `Group₁`
 variable (α β γ : Type*)
 variable (f : α ≃ β) (g : β ≃ γ)
 #print Equiv
@@ -99,6 +99,7 @@ structure AddGroup₁ (α : Type*) where
   add_zero : ∀ x : α, add x zero = x
   zero_add : ∀ x : α, add zero x = x
   neg_add_cancel : ∀ x : α, add (neg x) x = zero
+
 @[ext]
 structure Point where
   x : ℝ
@@ -203,6 +204,7 @@ instance ExampleInstanceUsingGroup₂ {α : Type*} : Group₂ (Equiv.Perm α) wh
   mul_one := Equiv.refl_trans
   inv_mul_cancel := Equiv.self_trans_symm
 
+-- This definition will be accessible whenever `α` has a `Group₂ α` instance.
 def mySquare {α : Type*} [Group₂ α] (x : α) :=
   Group₂.mul x x
 
