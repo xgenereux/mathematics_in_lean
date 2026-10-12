@@ -50,8 +50,8 @@ theorem my_lemma4 :
   calc
     |x * y| = |x| * |y| := by sorry
     _ ≤ |x| * ε := by sorry
-    _ < 1 * ε := sorry
-    _ = ε := sorry
+    _ < 1 * ε := by sorry
+    _ = ε := by sorry
 
 /- Definitions using ∀ -/
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
@@ -86,7 +86,6 @@ How to find
 try Leansearch
 try apply?, exact?
 try loogle
-try ai chats
  -/
 #check mul_nonneg
 
@@ -95,7 +94,7 @@ example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
   /- Sol:
     intro x
     simp
-    exact Left.mul_nonneg (nnf x) (nng x)
+    exact mul_nonneg (nnf x) (nng x)
   -/
 
 
