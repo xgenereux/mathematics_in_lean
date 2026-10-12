@@ -63,7 +63,11 @@ def FnLb (f : ℝ → ℝ) (a : ℝ) : Prop :=
 section
 variable (f g : ℝ → ℝ) (a b : ℝ)
 
-/- Intro without the `rw [FnUb]`. -/
+
+/-
+We can use `unfold` or `rw` to reveal definitions.
+
+However, they are not needed: -/
 example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) := by
   --rw [FnUb]
   intro x
