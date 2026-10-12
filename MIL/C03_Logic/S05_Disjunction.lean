@@ -94,7 +94,7 @@ theorem abs_add_le (x y : ℝ) : |x + y| ≤ |x| + |y| := by
     · rw [abs_of_nonneg h]
       apply add_le_add (le_abs_self _) (le_abs_self _)
     rw [abs_of_neg h]
-    linarith [neg_le_abs_self x, neg_le_abs_self y]
+    linarith [neg_le_abs x, neg_le_abs y]
   -/
 
 theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
@@ -111,7 +111,7 @@ theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
       exact h
     rintro (h | h)
     · apply lt_of_lt_of_le h (le_abs_self y)
-    linarith [neg_le_abs_self y]
+    linarith [neg_le_abs y]
   -/
 
 end MyAbs

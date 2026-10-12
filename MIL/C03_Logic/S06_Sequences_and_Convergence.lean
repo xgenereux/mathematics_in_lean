@@ -49,7 +49,7 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
       specialize hs n (le_trans (le_max_left _ _) hn)
       calc
         |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
-        _ ≤ |s n - a| + |t n - b| := by apply abs_add
+        _ ≤ |s n - a| + |t n - b| := by apply abs_add_le
         _ < ε / 2 + ε / 2 := by exact add_lt_add hs ht
         _ = ε := by ring
   -/

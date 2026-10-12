@@ -43,7 +43,7 @@ theorem my_lemma3 :
   intro x y ε epos ele1 xlt ylt
   sorry
 
-/- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_right`, and `one_mul`-/
+/- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_of_pos_right`, and `one_mul`-/
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
