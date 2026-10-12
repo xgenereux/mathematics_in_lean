@@ -152,8 +152,8 @@ section
 open Function
 
 example {c : ℝ} : Surjective fun x ↦ x + c := by
-  intro x
-  use x - c
+  intro y
+  use y - c
   dsimp; simp -- or `ring`
 
 /- Division, `mul_div_cancel₀` and `field_simp` -/
