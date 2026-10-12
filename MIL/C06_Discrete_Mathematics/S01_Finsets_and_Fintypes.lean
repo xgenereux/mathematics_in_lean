@@ -4,6 +4,7 @@ import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Fintype.BigOperators
 
 section
+-- Note the `DecidableEq`. We usually have this for the date you expect to be able to compute.
 variable {α : Type*} [DecidableEq α] (a : α) (s t : Finset α)
 
 #check a ∈ s
@@ -16,6 +17,8 @@ open Finset
 variable (a b c : Finset ℕ)
 variable (n : ℕ)
 
+-- Note the definition may not be what you think.
+-- Why would Mathlib do this?
 #check a ∩ b
 #check a ∪ b
 #check a \ b
@@ -148,4 +151,3 @@ variable (s : Finset ℕ)
 example : (↑s : Type) = {x : ℕ // x ∈ s} := rfl
 example : Fintype.card ↑s = s.card := by simp
 end
-

@@ -61,14 +61,34 @@ theorem map_map' (f : α → β) (g : β → γ) (as : List α) :
   . rfl
   . simp [map, ih]
 
-def reverse : List α → List α := sorry
+def reverse : List α → List α :=
+  sorry
+  /-
+    | [] => []
+    | x :: xs => reverse xs ++ [x]
+  -/
 
 theorem reverse_append (as bs : List α) : reverse (as ++ bs) = reverse bs ++ reverse as := by
   sorry
+  /-
+    induction as with
+    | nil => simp [reverse]
+    | cons x xs ih =>
+      simp [reverse, ih]
+  -/
 
-theorem reverse_reverse (as : List α) : reverse (reverse as) = as := by sorry
+theorem reverse_reverse (as : List α) : reverse (reverse as) = as := by
+  sorry
+  /-
+    induction as with
+    | nil => simp [reverse]
+    | cons x xs ih =>
+      simp [reverse, ih, reverse_append]
+  -/
 
 end MyListSpace3
+
+-- Stop here
 
 inductive BinTree where
   | empty : BinTree

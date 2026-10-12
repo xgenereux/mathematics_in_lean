@@ -7,11 +7,11 @@ namespace C05S03
 
 #check Nat.strong_induction_on
 /-
-From the book: 
+From the book:
 
 Let us continue our exploration of induction and recursion with another
 mathematical standard:
-  a proof that there are infinitely many primes.
+  *a proof that there are infinitely many primes.*
 One way to formulate this is as the statement that for
 every natural number n, there is a prime number greater than n.
 To prove this, let p be any prime factor of n! + 1.
@@ -41,7 +41,7 @@ theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) :
     ∃ p : Nat, p.Prime ∧ p ∣ n := by
   by_cases np : n.Prime
   · use n, np
-  induction' n using Nat.strong_induction_on with n ih
+  induction n using Nat.strong_induction_on with | h n ih
   rw [Nat.prime_def_lt] at np
   push_neg at np
   rcases np h with ⟨m, mltn, mdvdn, mne1⟩
@@ -56,6 +56,8 @@ theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) :
   · rcases ih m mltn mgt2 mp with ⟨p, pp, pdvd⟩
     use p, pp
     apply pdvd.trans mdvdn
+
+-- We stop here for time reason.
 
 theorem primes_infinite : ∀ n, ∃ p > n, Nat.Prime p := by
   intro n

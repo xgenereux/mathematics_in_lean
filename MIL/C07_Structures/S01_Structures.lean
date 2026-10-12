@@ -238,7 +238,7 @@ def IsLinear' (f : ℝ → ℝ) :=
 
 
 /-
-It is sometimes also possible to use the idea of **subtypes** instead of structure.
+It is sometimes also desirable to use the idea of **subtypes** instead of structure.
 -/
 
 def PReal :=
@@ -260,6 +260,8 @@ def StandardTwoSimplex' :=
 def StandardSimplex' (n : ℕ) :=
   { v : Fin n → ℝ // (∀ i : Fin n, 0 ≤ v i) ∧ (∑ i, v i) = 1 }
 
+
+-- Sigma type (dependent pair)
 def StdSimplex := Σ n : ℕ, StandardSimplex n
 
 section
