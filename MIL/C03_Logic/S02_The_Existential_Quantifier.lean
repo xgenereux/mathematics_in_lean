@@ -49,6 +49,7 @@ variable {f g : ℝ → ℝ}
 
 /- I recommend `obtain` -/
 example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
+  rw [FnHasUb] at ubf
   obtain ⟨a, ubfa⟩ := ubf
   rcases ubg with ⟨b, ubgb⟩
   use a + b
@@ -56,7 +57,15 @@ example (ubf : FnHasUb f) (ubg : FnHasUb g) : FnHasUb fun x ↦ f x + g x := by
 
 /- If there is interest -/
 example (lbf : FnHasLb f) (lbg : FnHasLb g) : FnHasLb fun x ↦ f x + g x := by
-  sorry
+  rw [FnHasLb] at *
+  obtain ⟨a, lbfa⟩ := lbf
+  obtain ⟨b, lbgb⟩ := lbg
+  use a + b
+  rw [FnLb] at *
+  intro x
+  specialize lbgb x
+  specialize lbfa x
+  linarith
 
 example {c : ℝ} (ubf : FnHasUb f) (h : c ≥ 0) : FnHasUb fun x ↦ c * f x := by
   sorry

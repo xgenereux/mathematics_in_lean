@@ -43,15 +43,28 @@ theorem my_lemma3 :
   intro x y ε epos ele1 xlt ylt
   sorry
 
+#check abs_mul
+#check mul_le_mul
+#check abs_nonneg
+#check mul_lt_mul_of_pos_right
+#check one_mul
+
 /- Calc example using `abs_mul`, `mul_le_mul`, `abs_nonneg`, `mul_lt_mul_of_pos_right`, and `one_mul`-/
 theorem my_lemma4 :
     ∀ {x y ε : ℝ}, 0 < ε → ε ≤ 1 → |x| < ε → |y| < ε → |x * y| < ε := by
   intro x y ε epos ele1 xlt ylt
   calc
-    |x * y| = |x| * |y| := by sorry
-    _ ≤ |x| * ε := by sorry
-    _ < 1 * ε := by sorry
-    _ = ε := by sorry
+    |x * y| = |x| * |y| := by apply abs_mul
+    _ ≤ |x| * ε := by
+      apply mul_le_mul
+      · linarith
+      · linarith
+      · apply abs_nonneg
+      · apply abs_nonneg
+    _ < 1 * ε := by
+      apply mul_lt_mul_of_pos_right _ epos
+      linarith
+    _ = ε := by simp
 
 /- Definitions using ∀ -/
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
@@ -72,14 +85,14 @@ example (hfa : FnUb f a) (hgb : FnUb g b) : FnUb (fun x ↦ f x + g x) (a + b) :
   --rw [FnUb]
   intro x
   apply add_le_add
-  · --rw [FnUb]
+  · --rw [FnUb] at hfa
     apply hfa
   · --rw [FnUb]
     apply hgb
 
 /- Now a similar example in term mode -/
 example (hfa : FnLb f a) (hgb : FnLb g b) : FnLb (fun x ↦ f x + g x) (a + b) :=
-  sorry
+  (fun x ↦ add_le_add (hfa x) (hgb x))
   /- Sol:
     fun _ ↦ add_le_add (hfa _) (hgb _)
   -/
@@ -93,7 +106,11 @@ try loogle
  -/
 #check mul_nonneg
 
+-- 0 ≤ a and 0 ≤ b then 0 ≤ a * b
+
 example (nnf : FnLb f 0) (nng : FnLb g 0) : FnLb (fun x ↦ f x * g x) 0 := by
+  rw [FnLb] at *
+  intro x
   sorry
   /- Sol:
     intro x
