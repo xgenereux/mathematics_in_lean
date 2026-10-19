@@ -6,13 +6,17 @@ namespace C03S03
 section
 variable (a b : ℝ)
 
-/- Remember: `¬ A "=" A → False `-/
+/- Remember: `¬ A ":=" A → False `-/
 
-/- Typical use -/
+/- First example. Notice the name of the hypothesis created by have. -/
 example (h : a < b) : ¬b < a := by
+  -- rw [Not]
   intro h'
-  have : a < a := lt_trans h h'
-  apply lt_irrefl _ this
+  have : a < a :=
+    -- by linarith
+    lt_trans h h'
+  #check lt_irrefl a
+  apply lt_irrefl a this
 
 def FnUb (f : ℝ → ℝ) (a : ℝ) : Prop :=
   ∀ x, f x ≤ a
@@ -30,13 +34,14 @@ variable (f : ℝ → ℝ)
 
 example (h : ∀ a, ∃ x, f x > a) : ¬FnHasUb f := by
   intro fnub
+  -- rw [FnHasUb] at fnub
   rcases fnub with ⟨a, fnuba⟩
   rcases h a with ⟨x, hx⟩
   have : f x ≤ a := fnuba x
   linarith
 
 /- similar -/
-example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f :=
+example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f := by
   sorry
 
 /- choose the right witness-/
@@ -64,7 +69,7 @@ example (h : Monotone f) (h' : f a < f b) : a < b := by
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
   sorry
 
-/- The second the last example is not true for ≤.-/
+/- The second the last example is not true for ≤. -/
 /- local definitions -/
 example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
   intro h
@@ -72,6 +77,9 @@ example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a �
   have monof : Monotone f := by intro a b hab; exact le_refl _
   have h' : f 1 ≤ f 0 := le_refl _
   sorry
+/-
+New tactic called `let`.
+-/
 
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   apply le_of_not_gt
@@ -97,6 +105,9 @@ example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
 example (h : ∃ x, ¬P x) : ¬∀ x, P x := by
   sorry
 
+/-
+What do we need to prove the third problem?
+-/
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
   apply h
