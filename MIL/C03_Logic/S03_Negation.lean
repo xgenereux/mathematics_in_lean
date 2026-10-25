@@ -8,7 +8,8 @@ variable (a b : ℝ)
 
 /- Remember: `¬ A ":=" A → False `-/
 
-/- First example. Notice the name of the hypothesis created by have. -/
+/- First example. Notice the name of the hypothesis
+created by have. -/
 example (h : a < b) : ¬b < a := by
   -- rw [Not]
   intro h'
@@ -34,19 +35,32 @@ variable (f : ℝ → ℝ)
 
 example (h : ∀ a, ∃ x, f x > a) : ¬FnHasUb f := by
   intro fnub
-  -- rw [FnHasUb] at fnub
+  rw [FnHasUb] at fnub
   rcases fnub with ⟨a, fnuba⟩
   rcases h a with ⟨x, hx⟩
+  rw [FnUb] at fnuba
   have : f x ≤ a := fnuba x
   linarith
 
 /- similar -/
 example (h : ∀ a, ∃ x, f x < a) : ¬FnHasLb f := by
-  sorry
+  intro hlb
+  rw [FnHasLb] at hlb
+  obtain ⟨a, ha⟩ := hlb
+  rw [FnLb] at ha
+  have h := h a
+  obtain ⟨x, hx⟩ := h
+  have ha := ha x
+  linarith
 
 /- choose the right witness-/
 example : ¬FnHasUb fun x ↦ x := by
-  sorry
+  intro h
+  rw [FnHasUb] at h
+  obtain ⟨a, ha⟩ := h
+  rw [FnUb] at ha
+  have ha := ha (a + 1)
+  linarith
 
 #check (not_le_of_gt : a > b → ¬a ≤ b)
 #check (not_lt_of_ge : a ≥ b → ¬a < b)
@@ -55,11 +69,17 @@ example : ¬FnHasUb fun x ↦ x := by
 #check not_le
 #check not_lt
 
+
 /- `lt_iff_not_ge` or `not_le`, `not_lt`
 Let's look at `absurd` and `contrapose(!)`
 -/
 example (h : Monotone f) (h' : f a < f b) : a < b := by
-  sorry
+  rw [Monotone] at h
+  -- have h := @h b a
+  contrapose h'
+  rw [not_lt] at *
+  apply h h'
+
   /- Sol:
     contrapose h'
     simp only [not_lt] at *
@@ -67,16 +87,27 @@ example (h : Monotone f) (h' : f a < f b) : a < b := by
   -/
 
 example (h : a ≤ b) (h' : f b < f a) : ¬Monotone f := by
-  sorry
+  intro hM
+  rw [Monotone] at hM
+  have hM := hM h
+  rw [← not_lt] at hM
+  exact hM h'
 
 /- The second the last example is not true for ≤. -/
 /- local definitions -/
-example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b}, f a ≤ f b → a ≤ b := by
+example : ¬∀ {f : ℝ → ℝ}, Monotone f → ∀ {a b},
+    f a ≤ f b → a ≤ b := by
   intro h
   let f := fun x : ℝ ↦ (0 : ℝ)
-  have monof : Monotone f := by intro a b hab; exact le_refl _
+  have monof : Monotone f := by
+    intro a b hab
+    unfold f
+    -- linarith
+    exact le_refl _
   have h' : f 1 ≤ f 0 := le_refl _
-  sorry
+  have h : 1 ≤ (0 : ℝ) := h monof h'
+  linarith
+
 /-
 New tactic called `let`.
 -/
@@ -84,7 +115,7 @@ New tactic called `let`.
 example (x : ℝ) (h : ∀ ε > 0, x < ε) : x ≤ 0 := by
   apply le_of_not_gt
   intro hx
-  specialize h (x / 2) (by simp [hx])
+  specialize h (x / 2) (by linarith)
   linarith
 
 end
@@ -93,17 +124,25 @@ section
 variable {α : Type*} (P : α → Prop) (Q : Prop)
 
 example (h : ¬∃ x, P x) : ∀ x, ¬P x := by
-  sorry
+  intro x hP
+  apply h
+  use x
 
 example (h : ∀ x, ¬P x) : ¬∃ x, P x := by
-  sorry
+  intro hP
+  obtain ⟨x, hx⟩ := hP
+  specialize h x
+  exact h hx
 
--- !
+-- !!
 example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   sorry
 
 example (h : ∃ x, ¬P x) : ¬∀ x, P x := by
-  sorry
+  obtain ⟨x, hx⟩ := h
+  intro h
+  apply hx (h x)
+
 
 /-
 What do we need to prove the third problem?
@@ -112,19 +151,25 @@ example (h : ¬∀ x, P x) : ∃ x, ¬P x := by
   by_contra h'
   apply h
   intro x
-  show P x
+  -- show P x
   by_contra h''
   exact h' ⟨x, h''⟩
 
 example (h : ¬¬Q) : Q := by
-  sorry
+  by_contra
+  apply h this
 
 example (h : Q) : ¬¬Q := by
-  sorry
+  intro hQ
+  absurd hQ h
+  simp
 
 end
 
+-- Resume here for lecture 3
+
 -- push Not
+-- Note: Not available in Homework 1.
 section
 variable (f : ℝ → ℝ)
 
@@ -154,8 +199,7 @@ example (x : ℝ) (h : ∀ ε > 0, x ≤ ε) : x ≤ 0 := by
 
 end
 
--- `exflaso` and `False.elim`
-
+-- `exfalso` and `False.elim`s
 section
 variable (a : ℕ)
 
