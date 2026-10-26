@@ -86,7 +86,7 @@ theorem neg_le_abs (x : ℝ) : -x ≤ |x| := by
     · linarith [abs_of_neg h]
   -/
 
-
+-- Homework
 theorem abs_add_le (x y : ℝ) : |x + y| ≤ |x| + |y| := by
   sorry
   /-
@@ -102,16 +102,16 @@ theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
   /-
     constructor
     · intro h
-      rcases le_or_gt 0 y with h' | h'
-      · rw [abs_of_nonneg h'] at h
-        left
-        exact h
-      rw [abs_of_neg h'] at h
-      right
-      exact h
-    rintro (h | h)
-    · apply lt_of_lt_of_le h (le_abs_self y)
-    linarith [neg_le_abs y]
+      by_cases hy : 0 ≤ y
+      · left
+        simpa [abs_of_nonneg hy] using h
+      · right
+        simp at hy
+        simpa [abs_of_neg hy] using h
+    · intro h
+      rcases h with h | h
+      · linarith [le_abs_self y]
+      · linarith [neg_le_abs y]
   -/
 
 end MyAbs
@@ -138,8 +138,32 @@ example {m n k : ℕ} (h : m ∣ n ∨ m ∣ k) : m ∣ n * k := by
 example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
   sorry
 
+#check eq_zero_or_eq_zero_of_mul_eq_zero
+#check eq_neg_iff_add_eq_zero
+#check eq_of_sub_eq_zero
+
 example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  sorry
+  have h' : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
+  have h'' : (x + y) * (x - y) = 0 := by
+    rw [← h']
+    ring
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
+  · right
+    exact eq_neg_iff_add_eq_zero.mpr h1
+  · left
+    exact eq_of_sub_eq_zero h1
+  -- sorry
+  /-
+    have h' : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
+    have h'' : (x + y) * (x - y) = 0 := by
+      rw [← h']
+      ring
+    rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
+    · right
+      exact eq_neg_iff_add_eq_zero.mpr h1
+    · left
+      exact eq_of_sub_eq_zero h1
+  -/
 
 section
 /- Look at what it means to be a `Domain`. -/
@@ -162,7 +186,7 @@ example (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
 
 end
 
-/- The 3 following show how to use by_cases -/
+/- The 2 following examples show how to use by_cases -/
 example (P : Prop) : ¬¬P → P := by
   intro h
   cases em P
@@ -174,8 +198,5 @@ example (P : Prop) : ¬¬P → P := by
   by_cases h' : P
   · assumption
   contradiction
-
-example (P Q : Prop) : P → Q ↔ ¬P ∨ Q := by
-  sorry
 
 /- Look at cheatsheet-/

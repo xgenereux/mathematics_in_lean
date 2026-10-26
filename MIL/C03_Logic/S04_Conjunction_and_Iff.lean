@@ -8,7 +8,7 @@ namespace C03S04
 example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y := by
   /-
     constructor
-    · assumption
+    · assumption -- also new?
     intro h
     apply h₁
     rw [h]
@@ -30,7 +30,7 @@ example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
     rw [h₁]
   ⟨h₀, h⟩
 
-/- Elim hypotheses -/
+/- Elim hypotheses (similar to existential quantifier) -/
 example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x := by
   rcases h with ⟨h₀, h₁⟩
   contrapose! h₁
@@ -72,6 +72,7 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x := by
         contrapose! h₁
         exact le_antisymm h₀ h₁
 
+-- New notation for conjunction: projections
 /- h.right, h.left, h.1, h.2 -/
 example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x := by
   intro h'
@@ -135,5 +136,14 @@ example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y := by
   contrapose!
   exact le_antisymm h
 
+example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y :=
+  sorry
+
 example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y :=
   ⟨fun h₀ h₁ ↦ h₀ (by rw [h₁]), fun h₀ h₁ ↦ h₀ (le_antisymm h h₁)⟩
+
+-- `rw` with `↔`
+example (x : ℝ) : |x + 3| < 5 → -8 < x ∧ x < 2 := by
+  rw [abs_lt]
+  intro h
+  constructor <;> linarith

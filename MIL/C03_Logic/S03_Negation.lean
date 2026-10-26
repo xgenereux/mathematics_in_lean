@@ -195,6 +195,7 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
 example (x : ℝ) (h : ∀ ε > 0, x ≤ ε) : x ≤ 0 := by
   contrapose! h
   use x / 2
+  -- ignore rest of this proof for now
   constructor <;> linarith
 
 end
