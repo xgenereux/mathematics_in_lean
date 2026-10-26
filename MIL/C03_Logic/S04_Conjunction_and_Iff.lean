@@ -17,7 +17,6 @@ example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
   contrapose! h₁
   rw [h₁]
 
-
 /- anonymous constructor -/
 example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
   ⟨h₀, fun h ↦ h₁ (by rw [h])⟩
