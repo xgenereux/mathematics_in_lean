@@ -7,18 +7,19 @@ namespace C03S06
 def ConvergesTo (s : ℕ → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
-/- The `ext` tactic -/
+/- The `ext` tactic: prove equality of functions -/
 example : (fun x y : ℝ ↦ (x + y) ^ 2) = fun x y : ℝ ↦ x ^ 2 + 2 * x * y + y ^ 2 := by
   ext x y
   ring
 
-/- The `congr` tactic -/
+/- The `congr` tactic: prove `f x = f y` by proving `x = y`. -/
 example (a b : ℝ) : |a| = |a - b + b| := by
   congr
   ring
 
 /- The `convert` tactic -/
 example {a : ℝ} (h : 1 < a) : a < a * a := by
+  -- apply (mul_lt_mul_iff_left₀ _).2 h -- does not work
   convert (mul_lt_mul_iff_left₀ _).2 h
   · rw [one_mul] -- Reconcile term
   exact lt_trans zero_lt_one h -- Reconcile hyp
@@ -38,8 +39,8 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   intro ε εpos
   dsimp -- this line is not needed but cleans up the goal a bit.
   have ε2pos : 0 < ε / 2 := by linarith
-  rcases cs (ε / 2) ε2pos with ⟨Ns, hs⟩
-  rcases ct (ε / 2) ε2pos with ⟨Nt, ht⟩
+  obtain ⟨Ns, hs⟩ := cs (ε / 2) ε2pos
+  obtain ⟨Nt, ht⟩ := ct (ε / 2) ε2pos
   use max Ns Nt
   intro n hn
   -- hint use calc

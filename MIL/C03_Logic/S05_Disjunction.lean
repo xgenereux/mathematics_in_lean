@@ -134,6 +134,8 @@ theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
 
 end MyAbs
 
+-- resume here lecture 4
+
 end
 
 /- two disjunction -/
@@ -160,31 +162,20 @@ example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
 #check eq_neg_iff_add_eq_zero
 #check eq_of_sub_eq_zero
 
+/- The `replace h` tactic is similar to have but deletes (`clear`) the hypothesis `h` -/
 example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
-  have h' : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
-  have h'' : (x + y) * (x - y) = 0 := by
-    rw [← h']
+  replace h : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
+  replace h : (x + y) * (x - y) = 0 := by
+    rw [← h]
     ring
-  rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero h with h1 | h1
   · right
     exact eq_neg_iff_add_eq_zero.mpr h1
   · left
     exact eq_of_sub_eq_zero h1
-  -- sorry
-  /-
-    have h' : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
-    have h'' : (x + y) * (x - y) = 0 := by
-      rw [← h']
-      ring
-    rcases eq_zero_or_eq_zero_of_mul_eq_zero h'' with h1 | h1
-    · right
-      exact eq_neg_iff_add_eq_zero.mpr h1
-    · left
-      exact eq_of_sub_eq_zero h1
-  -/
 
 section
-/- Look at what it means to be a `Domain`. -/
+/- Look at what it means to be a domain. -/
 variable {R : Type*} [CommRing R] [IsDomain R]
 variable (x y : R)
 

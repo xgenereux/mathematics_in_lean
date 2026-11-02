@@ -36,7 +36,7 @@ example (h : s ⊆ t) : s ∩ u ⊆ t ∩ u := by
   exact ⟨h _ xs, xu⟩
 
 /-
-Definitional reduction example :
+Definitional reduction reminder :
   to make sense of the intro command and the anonymous
   constructors Lean is forced to expand the definitions."
 -/
@@ -135,8 +135,6 @@ example : s ∩ t = t ∩ s :=
     (fun x ⟨xt, xs⟩  ↦ ⟨xs, xt⟩)
   -/
 
-/- **Start here** -/
-
 /-
 **Some details about Sets**
 In the library, `Set α` is defined to be `α → Prop` and `x ∈ s`
@@ -174,10 +172,10 @@ example : evens ∪ odds = univ := by
 /- Set builder notation in definitions -/
 example : s ∩ t = {x | x ∈ s ∧ x ∈ t} := rfl
 example : s ∪ t = {x | x ∈ s ∨ x ∈ t} := rfl
-example : ∅ = {x : α | False} := rfl
-example : univ = {x : α| True} := rfl
+example : ∅ = {_x : α | False} := rfl
+example : univ = {_x : α| True} := rfl
 
-/- Here the membership means that`fun x ↦ x ∈ ∅ ↔ fun x ↦ False`-/
+/- Here the membership means that `fun x ↦ x ∈ ∅ ↔ fun x ↦ False`. -/
 example (x : ℕ) (h : x ∈ (∅ : Set ℕ)) : False :=
   h
 
@@ -315,7 +313,7 @@ open Set
 variable {α : Type*} (s : Set (Set α))
 
 /- Definition of the **Union of a set of sets.** -/
-#check fun {α} (S : Set (Set α)) ↦ ⋃ i ∈ S, i -- fill
+#check fun {α} (S : Set (Set α)) ↦ ⋃ i ∈ S, i
 
 #print Set.sUnion
 #check fun {α} (S : Set (Set α)) ↦ sSup S
