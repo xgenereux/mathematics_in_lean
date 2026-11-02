@@ -5,7 +5,12 @@ import Mathlib.Data.Nat.Prime.Basic
 namespace C03S04
 
 /- constructor example -/
-example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y := by
+example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) :
+    x ≤ y ∧ x ≠ y := by
+  constructor
+  · exact h₀
+  · sorry
+
   /-
     constructor
     · assumption -- also new?
@@ -13,18 +18,18 @@ example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
     apply h₁
     rw [h]
   -/
-  refine ⟨h₀, ?_⟩
-  contrapose! h₁
-  rw [h₁]
+
 
 /- anonymous constructor -/
-example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
+example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) :
+    x ≤ y ∧ x ≠ y :=
   ⟨h₀, fun h ↦ h₁ (by rw [h])⟩
 
 /- We can combine the two ideas by using `refine ⟨?_, ?_⟩` -/
 
 /- Another tactic and term mode combination -/
-example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
+example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) :
+    x ≤ y ∧ x ≠ y :=
   have h : x ≠ y := by
     contrapose! h₁
     rw [h₁]
@@ -32,7 +37,7 @@ example {x y : ℝ} (h₀ : x ≤ y) (h₁ : ¬y ≤ x) : x ≤ y ∧ x ≠ y :=
 
 /- Elim hypotheses (similar to existential quantifier) -/
 example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x := by
-  rcases h with ⟨h₀, h₁⟩
+  obtain ⟨h₀, h₁⟩ := h
   contrapose! h₁
   exact le_antisymm h₀ h₁
 
@@ -86,7 +91,14 @@ example {x y : ℝ} (h : x ≤ y ∧ x ≠ y) : ¬y ≤ x :=
 
 /- Practice using another form of `antisymm`. -/
 example {m n : ℕ} (h : m ∣ n ∧ m ≠ n) : m ∣ n ∧ ¬n ∣ m := by
-  sorry
+  obtain ⟨ha, hb⟩ := h
+  constructor
+  · exact ha
+  · contrapose hb
+    exact Nat.dvd_antisymm ha hb
+  -- dsimp [(· ∣ ·)] at *
+
+  -- sorry
   /- Sol:
     refine ⟨h.1, ?_⟩
     intro h'
@@ -113,15 +125,17 @@ example : ∃ x : ℝ, 2 < x ∧ x < 4 := by
   use 5 / 2
   constructor <;> norm_num
 
-lemma t : ∃ m n : ℕ, 4 < m ∧ m < n ∧ n < 10 ∧ Nat.Prime m ∧ Nat.Prime n := by
+lemma t : ∃ m n : ℕ,
+    4 < m ∧ m < n ∧ n < 10 ∧
+      Nat.Prime m ∧ Nat.Prime n := by
   use 5
   use 7
   norm_num
 
 
 example : Nat.Prime 999999937 := by norm_num
---example : Nat.Prime 9999999967 := by norm_num
---example : Nat.Prime 99999999977 := by norm_num
+-- example : Nat.Prime 9999999967 := by norm_num
+-- example : Nat.Prime 99999999977 := by norm_num
 
 example {x y : ℝ} : x ≤ y ∧ x ≠ y → x ≤ y ∧ ¬y ≤ x := by
   rintro ⟨h₀, h₁⟩
@@ -136,12 +150,25 @@ example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y := by
   contrapose!
   exact le_antisymm h
 
-example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y :=
-  sorry
+example {x y : ℝ} : x ≤ y ∧ ¬y ≤ x ↔ x ≤ y ∧ x ≠ y := by
+  constructor
+  · rintro ⟨h, hn⟩
+    constructor
+    · exact h
+    · intro heq
+      apply hn
+      rw [heq]
+  · rintro ⟨h, hne⟩
+    refine ⟨?_, ?_⟩
+    · exact h
+    · contrapose hne
+      apply le_antisymm <;> assumption
+
 
 example {x y : ℝ} (h : x ≤ y) : ¬y ≤ x ↔ x ≠ y :=
   ⟨fun h₀ h₁ ↦ h₀ (by rw [h₁]), fun h₀ h₁ ↦ h₀ (le_antisymm h h₁)⟩
 
+#check abs_lt
 -- `rw` with `↔`
 example (x : ℝ) : |x + 3| < 5 → -8 < x ∧ x < 2 := by
   rw [abs_lt]

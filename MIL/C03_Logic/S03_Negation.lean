@@ -168,13 +168,16 @@ end
 
 -- Resume here for lecture 3
 
--- push Not
+-- `push Not`
 -- Note: Not available in Homework 1.
 section
 variable (f : ℝ → ℝ)
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
-  sorry
+  dsimp [FnHasUb, FnUb] at h
+  push Not at h
+  exact h
+  -- sorry
 
 example (h : ¬∀ a, ∃ x, f x > a) : FnHasUb f := by
   push Not at h
@@ -186,7 +189,9 @@ example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   exact h
 
 example (h : ¬Monotone f) : ∃ x y, x ≤ y ∧ f y < f x := by
-  sorry
+  dsimp [Monotone] at h
+  push Not at h
+  exact h
 
 example (h : ¬FnHasUb f) : ∀ a, ∃ x, f x > a := by
   contrapose! h

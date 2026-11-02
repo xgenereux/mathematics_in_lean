@@ -26,7 +26,7 @@ example (h : y < -1) : y > 0 ∨ y < -1 :=
 #check le_or_gt 0 y
 /- Notation for patterns `_ | _ `-/
 example : x < |y| → x < y ∨ x < -y := by
-  rcases le_or_gt 0 y with h | h
+  obtain h | h := le_or_gt 0 y
   · rw [abs_of_nonneg h]
     intro h; left; exact h
   · rw [abs_of_neg h]
@@ -70,8 +70,14 @@ namespace MyAbs
 
 /- let's try to use le_or_gt -/
 
+#check abs_of_nonneg
+#check abs_of_neg
 theorem le_abs_self (x : ℝ) : x ≤ |x| := by
-  sorry
+  have := le_or_gt 0 x
+  obtain h | h := this
+  · rw [abs_of_nonneg h]
+  · rw [abs_of_neg h]
+    linarith
   /- Sol:
     rcases le_or_gt 0 x with h | h
     · rw [abs_of_nonneg h]
@@ -98,7 +104,19 @@ theorem abs_add_le (x y : ℝ) : |x + y| ≤ |x| + |y| := by
   -/
 
 theorem lt_abs : x < |y| ↔ x < y ∨ x < -y := by
-  sorry
+  constructor
+  · intro h
+    obtain hle | hlt := le_or_gt 0 y
+    · rw [abs_of_nonneg hle] at h
+      left
+      exact h
+    · rw [abs_of_neg hlt] at h
+      right
+      exact h
+  · intro h
+    obtain h | h := h
+    · linarith [le_abs_self y]
+    · linarith [neg_le_abs y]
   /-
     constructor
     · intro h
