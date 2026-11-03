@@ -162,7 +162,8 @@ example {x : ℝ} (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
 #check eq_neg_iff_add_eq_zero
 #check eq_of_sub_eq_zero
 
-/- The `replace h` tactic is similar to have but deletes (`clear`) the hypothesis `h` -/
+/- The `replace h` tactic is similar to have but
+  deletes (`clear`) the hypothesis `h` -/
 example {x y : ℝ} (h : x ^ 2 = y ^ 2) : x = y ∨ x = -y := by
   replace h : x ^ 2 - y ^ 2 = 0 := by rw [h, sub_self]
   replace h : (x + y) * (x - y) = 0 := by
@@ -183,7 +184,14 @@ variable (x y : R)
 /- x * y = 0 → x = 0 ∨ y = 0 -/
 #check mul_eq_zero
 example (h : x ^ 2 = 1) : x = 1 ∨ x = -1 := by
-  sorry
+  replace h : x ^ 2 - 1 = 0 := by rw [h]; ring
+  replace h : (x + 1) * (x - 1) = 0 := by rw [← h]; ring
+  rw [mul_eq_zero] at h
+  rw [or_comm]
+  rw [← eq_neg_iff_add_eq_zero] at h
+  rw [sub_eq_zero] at h
+  exact h
+
   /-
     have : x ^ 2 - 1 = 0 := by rw [h]; ring
     have : (x + 1) * (x - 1) = 0 := by rw [← this]; ring
@@ -204,8 +212,8 @@ example (P : Prop) : ¬¬P → P := by
 
 example (P : Prop) : ¬¬P → P := by
   intro h
-  by_cases h' : P
+  by_cases this : P
   · assumption
-  contradiction
+  · contradiction
 
 /- Look at cheatsheet-/

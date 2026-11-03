@@ -43,7 +43,7 @@ Definitional reduction reminder :
 
 example (h : s ⊆ t) : s ∩ u ⊆ t ∩ u := by
   intro x xsu
-  rw [mem_inter_iff]
+  -- rw [mem_inter_iff]
   exact ⟨h xsu.1, xsu.2⟩
 
 example (h : s ⊆ t) : s ∩ u ⊆ t ∩ u :=
@@ -71,7 +71,12 @@ example : s ∩ (t ∪ u) ⊆ s ∩ t ∪ s ∩ u := by
 
 /- Let's try it out. -/
 example : s ∩ t ∪ s ∩ u ⊆ s ∩ (t ∪ u) := by
-  sorry
+  rintro x (⟨hs, ht⟩ | ⟨hs, hu⟩)
+  · refine ⟨hs, Or.inl ht⟩
+  · constructor
+    · assumption
+    · right
+      exact hu
 
 #check Set.diff_eq
 #check Set.mem_diff

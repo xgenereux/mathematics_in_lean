@@ -8,7 +8,8 @@ def ConvergesTo (s : ℕ → ℝ) (a : ℝ) :=
   ∀ ε > 0, ∃ N, ∀ n ≥ N, |s n - a| < ε
 
 /- The `ext` tactic: prove equality of functions -/
-example : (fun x y : ℝ ↦ (x + y) ^ 2) = fun x y : ℝ ↦ x ^ 2 + 2 * x * y + y ^ 2 := by
+example : (fun x y : ℝ ↦ (x + y) ^ 2) =
+    fun x y : ℝ ↦ x ^ 2 + 2 * x * y + y ^ 2 := by
   ext x y
   ring
 
@@ -22,9 +23,11 @@ example {a : ℝ} (h : 1 < a) : a < a * a := by
   -- apply (mul_lt_mul_iff_left₀ _).2 h -- does not work
   convert (mul_lt_mul_iff_left₀ _).2 h
   · rw [one_mul] -- Reconcile term
-  exact lt_trans zero_lt_one h -- Reconcile hyp
+  · exact lt_trans zero_lt_one h -- Reconcile hyp
 
-theorem convergesTo_const (a : ℝ) : ConvergesTo (fun _x : ℕ ↦ a) a := by
+theorem convergesTo_const (a : ℝ) :
+    ConvergesTo (fun _x : ℕ ↦ a) a := by
+  -- rw [ConvergesTo]
   intro ε εpos
   use 0
   intro n nge
@@ -44,7 +47,14 @@ theorem convergesTo_add {s t : ℕ → ℝ} {a b : ℝ}
   use max Ns Nt
   intro n hn
   -- hint use calc
-  sorry
+  specialize ht n (by linarith [le_max_right Ns Nt])
+  specialize hs n (by linarith [le_max_left Ns Nt])
+  calc
+    |s n + t n - (a + b)| = |(s n - a) + (t n - b)| := by ring_nf
+                        _ ≤ |s n - a| + |t n - b| := by apply abs_add_le
+                        _ < ε / 2 + ε / 2 := by apply add_lt_add <;> assumption
+                        _ = ε := by linarith
+
   /-  Sol:
       specialize ht n (le_trans (le_max_right _ _) hn)
       specialize hs n (le_trans (le_max_left _ _) hn)
