@@ -5,6 +5,12 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 section
 
+/-
+**Image and Preimage of functions**
+**Injectivity and Surjectivity**
+
+-/
+
 variable {α β : Type*}
 variable (f : α → β)
 variable (s t : Set α)
@@ -87,6 +93,7 @@ section
 
 open Set Real
 
+#check sqrt
 /- More concrete example. -/
 example : sqrt '' { x | 0 ≤ x } = { y | 0 ≤ y } := by
   sorry
@@ -133,21 +140,18 @@ variable (f : α → β)
 open Function
 
 example : Injective f ↔ LeftInverse (inverse f) f := by
-  sorry
-  /-
-    constructor
-    · intro hinj
-      --unfold LeftInverse
-      intro x
-      have hex : ∃ y, f y = f x := by use x
-      rw [inverse, dif_pos hex]
-      apply hinj
-      exact choose_spec hex
-    · intro hinv
-      simp [LeftInverse] at hinv
-      intro x y hxy
-      rw [← hinv x, ← hinv y, hxy]
-  -/
+  constructor
+  · intro hinj
+    --unfold LeftInverse
+    intro x
+    have hex : ∃ y, f y = f x := by use x
+    rw [inverse, dif_pos hex]
+    apply hinj
+    exact choose_spec hex
+  · intro hinv
+    simp [LeftInverse] at hinv
+    intro x y hxy
+    rw [← hinv x, ← hinv y, hxy]
 
 example : Surjective f ↔ RightInverse (inverse f) f := by
   sorry

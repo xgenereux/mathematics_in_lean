@@ -109,6 +109,9 @@ example : (s \ t) \ u ⊆ s \ (t ∪ u) := by
 example : s \ (t ∪ u) ⊆ (s \ t) \ u := by
   sorry
 
+-- Start here
+
+
 /- Set `ext`. -/
 example : s ∩ t = t ∩ s := by
   ext x
@@ -154,7 +157,7 @@ so `x ∈ { y | P y }` reduces to `P x`.
 
 /-
 For example,
-We can turn the property of being even into the set of even numbers:
+We can turn the property (predicate) of being even into the set of even numbers:
 -/
 def evens : Set ℕ :=
   { n | Even n }
@@ -256,8 +259,13 @@ section
 variable {α I : Type*}
 variable (A B : I → Set α)
 variable (s : Set α)
-
 open Set
+
+-- `α` is the ambiant type
+-- `I` is the indexing type (Common example is `ℕ`)
+#check mem_iUnion
+#check mem_iInter
+
 /- Indexed union and intersection. -/
 example : (s ∩ ⋃ i, A i) = ⋃ i, A i ∩ s := by
   ext x
@@ -290,8 +298,8 @@ example : (⋂ p ∈ primes, { x | ¬p ∣ x }) ⊆ { x | x = 1 } := by
   apply Nat.exists_prime_and_dvd
 
 /-
-Let's start by typing `eq_univ`, tab completion will tell you that
-`rw [← eq_univ_of_forall]` is a good way to start the proof.
+Let's start by typing `rw [eq_univ]`, tab completion will tell you that
+`rw [eq_univ_of_forall]` is a good way to start the proof.
 We'll also need `Nat.exists_infinite_primes`.
 (We will prove this ourselves eventually.)
 
