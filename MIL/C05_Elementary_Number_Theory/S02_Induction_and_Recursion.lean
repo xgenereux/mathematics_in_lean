@@ -21,7 +21,9 @@ Recall that for inductive types:
 -/
 
 
-/- Properties of inductive types -/
+/- Properties of inductive types
+Note: `simp` can handle this.
+-/
 example (n : Nat) : n.succ ≠ Nat.zero :=
   Nat.succ_ne_zero n
 
@@ -76,11 +78,10 @@ theorem fac_pos (n : ℕ) : 0 < fac n := by
   | 0 => rw [fac]; norm_num
   | k + 1 => rw [fac]; exact mul_pos (by omega) (fac_pos k)
 
-/- Same thing with cases' instead of match. -/
+/- Same thing with `rcases` instead of match. (I don't really recommend this one.) -/
 theorem fac_pos' (n : ℕ) : 0 < fac n := by
   generalize h : n = N
   rcases N with _ | k
-  --cases' n with k
   · rw [fac]; norm_num
   · rw [fac]; exact mul_pos (by omega) (fac_pos' k)
 
@@ -90,11 +91,14 @@ theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) :
   | zero => simp_all
   | succ n ih =>
     rw [fac]
+    -- `Nat.of_le_succ : m ≤ n + 1 → m ≤ n ∨ m = n + 1`
     rcases Nat.of_le_succ ile with h | rfl
     · apply dvd_mul_of_dvd_right (ih h)
-    apply dvd_mul_right
+    · apply dvd_mul_right
 
-/- Let's use `Nat.le_induction`. -/
+/-
+We can use custom induction principles.
+Let's use `Nat.le_induction`. -/
 #check Nat.le_induction
 example {n : ℕ} (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
   induction n, hle using Nat.le_induction with
@@ -103,6 +107,7 @@ example {n : ℕ} (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
     rw [fac, pow_succ, mul_comm]
     apply Nat.mul_le_mul (by omega) hn
 
+-- Let's use `match`.
 theorem pow_two_le_fac (n : Nat) : 2 ^ (n - 1) ≤ fac n := by
   sorry
   /-

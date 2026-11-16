@@ -108,6 +108,8 @@ example : f '' (f ⁻¹' u) ⊆ u := by
 
 end
 
+-- resume here with recap
+
 section
 
 open Set Real
@@ -148,6 +150,26 @@ variable {α β : Type*} [Inhabited α]
 #check (default : α)
 
 variable (P : α → Prop) (h : ∃ x, P x)
+
+section nonexample
+
+-- def myEl : α := by
+--   obtain ⟨x, h⟩ := h
+
+end nonexample
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #check Classical.choose h
 #check Classical.choose_spec h
@@ -214,14 +236,15 @@ No surjective function from a set to its power set. (Type-theoretic statement)
 theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
   intro f surjf
   let S := { i | i ∉ f i }
-  rcases surjf S with ⟨j, h⟩
+  obtain ⟨j, hj⟩ := surjf S
   have h₁ : j ∉ f j := by
     intro h'
-    have : j ∉ f j := by rwa [h] at h'
+    have : j ∉ f j := by rwa [hj] at h'
     contradiction
-  have h₂ : j ∈ f j := by sorry
+  have h₂ : j ∈ f j := by
+    sorry
     /-
-      rw [h]; simp [S, h₁]
+      rwa [hj, Set.mem_setOf_eq]
     -/
   contradiction
 
