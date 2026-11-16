@@ -41,16 +41,19 @@ example : f '' (s ∪ t) = f '' s ∪ f '' t := by
   ext y; constructor
   · rintro ⟨x, xs | xt, rfl⟩
     · left
-      use x, xs
-    right
-    use x, xt
-  rintro (⟨x, xs, rfl⟩ | ⟨x, xt, rfl⟩)
-  · use x, Or.inl xs
-  use x, Or.inr xt
+      rw [image]
+      simp only [mem_setOf_eq]
+      use x
+    · right
+      use x, xt
+  · rintro (⟨x, xs, rfl⟩ | ⟨x, xt, rfl⟩)
+    · use x, Or.inl xs
+    · use x, Or.inr xt
 
 /- Notice that use close the goal since it tries `rfl`. -/
 example : s ⊆ f ⁻¹' (f '' s) := by
   intro x xs
+  -- simp only [preimage, image, mem_setOf]
   show f x ∈ f '' s
   use x, xs
 
@@ -62,7 +65,23 @@ attribute [-simp] image_subset_iff
 /- What do each side of this equivalence unfold to?
 Which one is the most convenient? -/
 example : f '' s ⊆ v ↔ s ⊆ f ⁻¹' v := by
-  sorry
+  constructor
+  · intro h x hx
+    simp only [preimage, mem_setOf]
+    simp [image] at h
+    rw [subset_def] at h
+    simp only [mem_setOf] at h
+    apply h
+    use x
+    -- have := h (f x)
+  · intro h
+    simp [image]
+    simp [preimage] at h
+    intro x hx
+    simp only [mem_setOf] at hx
+    simp only [subset_def, mem_setOf] at h
+    obtain ⟨a, ha, rfl⟩ := hx
+    apply h _ ha
   /-
     constructor
     · intro hf
@@ -96,7 +115,19 @@ open Set Real
 #check sqrt
 /- More concrete example. -/
 example : sqrt '' { x | 0 ≤ x } = { y | 0 ≤ y } := by
-  sorry
+  simp [image]
+  ext x
+  constructor
+  · intro h
+    simp at *
+    obtain ⟨a, h₁, rfl⟩ := h
+    apply sqrt_nonneg
+  · intro h
+    simp at *
+    use x ^ 2
+    constructor
+    · exact sq_nonneg x
+    · exact sqrt_sq h
   /-
     ext x
     constructor

@@ -117,8 +117,9 @@ example : s ∩ t = t ∩ s := by
   ext x
   simp only [mem_inter_iff]
   constructor
-  · rintro ⟨xs, xt⟩; exact ⟨xt, xs⟩
-  · rintro ⟨xt, xs⟩; exact ⟨xs, xt⟩
+  · rintro ⟨l, r⟩; exact ⟨r, l⟩
+  · rintro ⟨l, r⟩; exact ⟨r, l⟩
+  -- · rintro ⟨xt, xs⟩; exact ⟨xs, xt⟩
 
 example : s ∩ t = t ∩ s :=
   Set.ext fun _x ↦ ⟨fun ⟨xs, xt⟩ ↦ ⟨xt, xs⟩, fun ⟨xt, xs⟩ ↦ ⟨xs, xt⟩⟩
@@ -136,8 +137,8 @@ example : s ∩ t = t ∩ s := by
 /- Same thing in term mode -/
 example : s ∩ t = t ∩ s :=
     Subset.antisymm
-      sorry
-      sorry
+      (fun _ ⟨xs, xt⟩ ↦ ⟨xt, xs⟩)
+      (fun _ ⟨xt, xs⟩ ↦ ⟨xs, xt⟩)
   /- Sol:
     (fun x ⟨xs, xt⟩  ↦ ⟨xt, xs⟩)
     (fun x ⟨xt, xs⟩  ↦ ⟨xs, xt⟩)
@@ -175,7 +176,7 @@ example : evens ∪ odds = univ := by
   rw [evens, odds]
   ext n
   simp [- Nat.not_even_iff_odd]
-  apply Classical.em
+  exact Classical.em _
 
 /- Set builder notation in definitions -/
 example : s ∩ t = {x | x ∈ s ∧ x ∈ t} := rfl
@@ -206,7 +207,11 @@ Show this using `Nat.Prime.eq_two_or_odd` and `Nat.odd_iff`.
 -/
 #check Nat.Prime.eq_two_or_odd
 example : { n | Nat.Prime n } ∩ { n | n > 2 } ⊆ { n | ¬Even n } := by
-  sorry
+  rintro x ⟨hP, h2⟩
+  simp at *
+  obtain rfl | h := Nat.Prime.eq_two_or_odd hP
+  · contradiction
+  · rwa [Nat.odd_iff]
   /- Sol:
     intro x ⟨hp, h2⟩
     simp_all
@@ -238,7 +243,10 @@ variable (s t : Set ℕ)
 /- Bounded quantifiers. Small differences but behave roughly the same
 as you would expect: ∀ x ∈ s, ... = ∀ x, x ∈ s → ...  -/
 example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) : ∀ x ∈ s, ¬Even x ∧ Prime x := by
-  sorry
+  intro x hx
+  specialize h₀ x hx
+  specialize h₁ x hx
+  exact ⟨h₀, h₁⟩
   /- Sol:
     intro x xs
     constructor
@@ -247,7 +255,8 @@ example (h₀ : ∀ x ∈ s, ¬Even x) (h₁ : ∀ x ∈ s, Prime x) : ∀ x ∈
   -/
 
 example (h : ∃ x ∈ s, ¬Even x ∧ Prime x) : ∃ x ∈ s, Prime x := by
-  sorry
+  obtain ⟨x, hx, hnE, hP⟩ := h
+  use x
   /- Sol:
     rcases h with ⟨x, xs, _, prime_x⟩
     use x, xs
@@ -273,8 +282,8 @@ example : (s ∩ ⋃ i, A i) = ⋃ i, A i ∩ s := by
   constructor
   · rintro ⟨xs, ⟨i, xAi⟩⟩
     exact ⟨i, xAi, xs⟩
-  rintro ⟨i, xAi, xs⟩
-  exact ⟨xs, ⟨i, xAi⟩⟩
+  · rintro ⟨i, xAi, xs⟩
+    exact ⟨xs, ⟨i, xAi⟩⟩
 
 #check mem_iUnion₂
 #check mem_iInter₂
@@ -283,9 +292,9 @@ def primes : Set ℕ :=
   { x | Nat.Prime x }
 
 example : (⋃ p ∈ primes, { x | p ^ 2 ∣ x }) = { x | ∃ p ∈ primes, p ^ 2 ∣ x } :=by
-  ext
+  ext x
   rw [mem_iUnion₂]
-  simp
+  simp only [mem_setOf_eq, exists_prop]
 
 example : (⋃ p ∈ primes, { x | p ^ 2 ∣ x }) = { x | ∃ p ∈ primes, p ^ 2 ∣ x } := by
   ext
@@ -306,7 +315,15 @@ We'll also need `Nat.exists_infinite_primes`.
 hint: use simp to simplify the big union.
 -/
 example : (⋃ p ∈ primes, { x | x ≤ p }) = univ := by
-  sorry
+  rw [eq_univ_iff_forall]
+  intro x
+  rw [mem_iUnion₂]
+  simp
+  obtain ⟨p, hle, hP⟩ := Nat.exists_infinite_primes x
+  use p
+  rw [primes]
+  simp
+  constructor <;> assumption
   /-
     rw [@eq_univ_iff_forall]
     intro a
