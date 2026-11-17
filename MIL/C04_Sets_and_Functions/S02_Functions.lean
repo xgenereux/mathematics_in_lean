@@ -149,12 +149,15 @@ variable {α β : Type*} [Inhabited α]
 
 #check (default : α)
 
+#check (fun (n : Nat) ↦ 7 ≤ n)
+
 variable (P : α → Prop) (h : ∃ x, P x)
 
 section nonexample
 
 -- def myEl : α := by
 --   obtain ⟨x, h⟩ := h
+--   use x
 
 end nonexample
 
@@ -184,7 +187,8 @@ open Classical
 def inverse (f : α → β) : β → α := fun y : β ↦
   if h : ∃ x, f x = y then Classical.choose h else default
 
-theorem inverse_spec {f : α → β} (y : β) (h : ∃ x, f x = y) : f (inverse f y) = y := by
+theorem inverse_spec {f : α → β} {y : β} (h : ∃ x, f x = y) :
+    f (inverse f y) = y := by
   rw [inverse, dif_pos h]
   exact Classical.choose_spec h
 
@@ -195,7 +199,7 @@ open Function
 example : Injective f ↔ LeftInverse (inverse f) f := by
   constructor
   · intro hinj
-    --unfold LeftInverse
+    unfold LeftInverse
     intro x
     have hex : ∃ y, f y = f x := by use x
     rw [inverse, dif_pos hex]
@@ -207,7 +211,15 @@ example : Injective f ↔ LeftInverse (inverse f) f := by
     rw [← hinv x, ← hinv y, hxy]
 
 example : Surjective f ↔ RightInverse (inverse f) f := by
-  sorry
+  unfold RightInverse LeftInverse Surjective
+  constructor
+  · intro h y
+    specialize h y
+    apply inverse_spec h
+  · intro h y
+    specialize h y
+    use inverse f y
+
   /-
     constructor
     · intro hsur
@@ -231,7 +243,8 @@ variable {α : Type*}
 open Function
 
 /-
-No surjective function from a set to its power set. (Type-theoretic statement)
+No surjective function from a set to its power set.
+(Type-theoretic statement)
 -/
 theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
   intro f surjf
@@ -242,7 +255,8 @@ theorem Cantor : ∀ f : α → Set α, ¬Surjective f := by
     have : j ∉ f j := by rwa [hj] at h'
     contradiction
   have h₂ : j ∈ f j := by
-    sorry
+    rw [hj]
+    simp [S, h₁]
     /-
       rwa [hj, Set.mem_setOf_eq]
     -/

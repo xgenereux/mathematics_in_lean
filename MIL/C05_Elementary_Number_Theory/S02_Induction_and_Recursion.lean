@@ -58,10 +58,13 @@ example (n : ℕ) : fac (n + 1) = (n + 1) * fac n := by
 example (n : ℕ) : 0 < fac n := by
   induction n with
   | zero      => rw [fac]; exact zero_lt_one
-  | succ n ih => rw [fac]; exact mul_pos n.succ_pos ih
+  | succ n ih =>
+    rw [fac];
+    exact mul_pos n.succ_pos ih
 
 /-
-The `omega` tactic, for resolving integer and natural linear arithmetic problems.
+The `omega` tactic, for resolving integer
+and natural linear arithmetic problems.
 Note: You can also try out `grind`.
 -/
 example (n : ℕ) : 0 < fac n := by
@@ -78,7 +81,8 @@ theorem fac_pos (n : ℕ) : 0 < fac n := by
   | 0 => rw [fac]; norm_num
   | k + 1 => rw [fac]; exact mul_pos (by omega) (fac_pos k)
 
-/- Same thing with `rcases` instead of match. (I don't really recommend this one.) -/
+/- Same thing with `rcases` instead of match.
+  (I don't really recommend this one.) -/
 theorem fac_pos' (n : ℕ) : 0 < fac n := by
   generalize h : n = N
   rcases N with _ | k
@@ -105,11 +109,20 @@ example {n : ℕ} (hle : 7 ≤ n) : 3 ^ n ≤ fac n := by
   | base => norm_num [fac]
   | succ n hle hn =>
     rw [fac, pow_succ, mul_comm]
-    apply Nat.mul_le_mul (by omega) hn
+    apply Nat.mul_le_mul _ hn
+    omega
 
 -- Let's use `match`.
 theorem pow_two_le_fac (n : Nat) : 2 ^ (n - 1) ≤ fac n := by
-  sorry
+  match n with
+  | 0 => simp [fac]
+  | 1 => simp [fac]
+  | n + 2 =>
+    simp
+    have ih := pow_two_le_fac (n + 1)
+    simp at ih
+    rw [pow_succ, fac, mul_comm]
+    apply Nat.mul_le_mul (by grind) (ih)
   /-
     match n with
     | 0 => simp [fac]
@@ -160,7 +173,8 @@ example : (range n).sum f = ∑ x ∈ range n, f x :=
 example (f : ℕ → ℕ) : ∑ x ∈ range 0, f x = 0 :=
   Finset.sum_range_zero f
 
-example (f : ℕ → ℕ) (n : ℕ) : ∑ x ∈ range n.succ, f x = ∑ x ∈ range n, f x + f n :=
+example (f : ℕ → ℕ) (n : ℕ) :
+    ∑ x ∈ range n.succ, f x = ∑ x ∈ range n, f x + f n :=
   Finset.sum_range_succ f n
 
 theorem sum_id (n : ℕ) :
@@ -233,14 +247,20 @@ example (m n : MyNat) : add m n = add n m := by
   | zero => rw [zero_add]; rfl
   | succ n ih => rw [add, succ_add, ih]
 
-/- Using recursion, the induction hypothesis is replaced by the name of the lemma. -/
+/- Using recursion, the induction hypothesis is
+  replaced by the name of the lemma. -/
 theorem add_comm (m n : MyNat) : add m n = add n m := by
   match m with
     | zero => simp_rw [zero_add, add]
     | succ m => simp_rw [succ_add, add, add_comm]
 
 theorem add_assoc (m n k : MyNat) : add (add m n) k = add m (add n k) := by
-  sorry
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [add, ih]
+    rewrite [add, add]
+    rfl
   /-
     induction k with
     | zero => rfl

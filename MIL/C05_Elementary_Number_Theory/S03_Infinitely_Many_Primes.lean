@@ -58,7 +58,7 @@ theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) :
       use p, pp
       apply pdvd.trans mdvdn
 
--- We stop here for time reason.
+-- We stop here for time reasons.
 
 theorem primes_infinite : ∀ n, ∃ p > n, Nat.Prime p := by
   intro n
