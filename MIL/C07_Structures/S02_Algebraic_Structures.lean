@@ -11,7 +11,7 @@ Objectives :
 - Recognize concrete instances of structures. (e.g. ℤ, ℚ and ℝ are all ordered rings.)
 - Support for generic notation
   (When we write `*`, Lean should figure out which multiplication we mean on its own)
-- Possibility to extend algebraic structure. (A commutative ring is still a ring.)
+- Possibility to extend algebraic structures. (A commutative ring is still a ring.)
 -/
 
 /-
@@ -69,6 +69,7 @@ example : (f.trans g : α → γ) = g ∘ f :=
 
 end
 
+-- Definition of `Equiv.Perm`
 example (α : Type*) : Equiv.Perm α = (α ≃ α) :=
   rfl
 
@@ -88,8 +89,7 @@ def permGroup {α : Type*} : Group₁ (Equiv.Perm α)
 
 /- There is a difference between `Group` and `AddGroup`.
 The names of the fields link to the notation we use;
-it is also important when it comes to extend these structures.
--/
+it is also important when it comes to how we extend these structures. -/
 
 structure AddGroup₁ (α : Type*) where
   (add : α → α → α)
@@ -175,7 +175,7 @@ to figure it out from contextual cues in the expression.
 The annotation `[grp : Group G]` tells Lean that the
 corresponding argument should be synthesized using
 **type class inference**.
-Usually we can omit the `grp` for these.
+Usually we can omit the name `grp` for these and write `[Group G]`.
 -/
 
 /-

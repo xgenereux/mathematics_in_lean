@@ -26,6 +26,8 @@ example (a b : Point) (hx : a.x = b.x) (hy : a.y = b.y)
   ext
   repeat' assumption
 
+-- Different ways to define a specific point
+
 def myPoint1 : Point where
   x := 2
   y := -1
@@ -40,7 +42,7 @@ def myPoint3 : Point :=
 def myPoint4 :=
   Point.mk 2 (-1) 4
 
-/- Naming the constuctor -/
+/- Naming the constuctor, here `build` -/
 structure Point' where build ::
   x : ℝ
   y : ℝ
@@ -90,10 +92,7 @@ theorem addAlt_x (a b : Point) : (a.addAlt b).x = a.x + b.x := by
 
 theorem addAlt_comm (a b : Point) : addAlt a b = addAlt b a := by
   rw [addAlt, addAlt]
-  /-
-  the same proof still works, but the goal view
-  here is harder to read
-  -/
+  -- the same proof still works
   ext <;> dsimp
   repeat' apply add_comm
 
@@ -122,7 +121,7 @@ end Point
 Using structures is only the first step on the road to algebraic abstraction.
 We don’t yet have a way to link `Point.add` to the generic `+` symbol,
 or to connect `Point.add_comm` and `Point.add_assoc` to the generic `add_comm` and
-`add_assoc` theorems. See `6.2`.
+`add_assoc` theorems.
 -/
 
 /- We can add fields of type `Prop`. -/
@@ -142,8 +141,7 @@ https://sagecell.sagemath.org/?z=eJwrSyzSUK_QqdSpUtfk5crMLcjJTM4siS_IyS8xTtGo0K7
 
 namespace StandardTwoSimplex
 
-def swapXy (a : StandardTwoSimplex) : StandardTwoSimplex
-    where
+def swapXy (a : StandardTwoSimplex) : StandardTwoSimplex where
   x := a.y
   y := a.x
   z := a.z
@@ -155,8 +153,7 @@ def swapXy (a : StandardTwoSimplex) : StandardTwoSimplex
 noncomputable section
 
 /- Function on our `StandardTwoSimplex`-/
-def midpoint (a b : StandardTwoSimplex) : StandardTwoSimplex
-    where
+def midpoint (a b : StandardTwoSimplex) : StandardTwoSimplex where
   x := (a.x + b.x) / 2
   y := (a.y + b.y) / 2
   z := (a.z + b.z) / 2
@@ -239,10 +236,7 @@ def Point'' :=
 def IsLinear' (f : ℝ → ℝ) :=
   (∀ x y, f (x + y) = f x + f y) ∧ ∀ x c, f (c * x) = c * f x
 
-
-/-
-It is sometimes also desirable to use the idea of **subtypes** instead of structure.
--/
+-- It is sometimes also desirable to use the idea of **subtypes** instead of structure.
 
 def PReal :=
   { y : ℝ // 0 < y }
